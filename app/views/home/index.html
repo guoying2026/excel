@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Simple MVC</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" href="./layui/css/layui.css">
+    </head>
+    <body class="layui-main">
+        <form class="layui-form">
+        <!-- 注意getenv()在IIS下获取不到正确ip地址，它适用于apache,$_SERVER都可以 -->
+            <blockquote class="layui-elem-quote" style="margin-top:30px">Please provide network accessible (for user {{ USER_NAME }}) addresses for the 2 spreadsheets.</blockquote>
+            <blockquote class="layui-elem-quote" style="margin-top:30px">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Version:</label>
+                    <div id="cat_ids1">         
+                    </div>
+                </div>
+            
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo" id="submit" onclick="javascript: return false;">submit</button>
+                    </div>
+                </div> 
+            </blockquote>
+            <blockquote class="layui-elem-quote" style="margin-top:30px">
+                <div class="layui-btn-container" style="margin-left:108px">
+                    <a href="content/index" class="layui-btn layui-btn-normal">View data</a> 
+                    <a href="content/truncate" class="layui-btn layui-btn-danger">Delete all data</a> 
+                </div>
+            </blockquote> 
+        </form>
+    </body>
+    <script src="./js/jquery-3.1.1.min.js"></script>
+    <script src="./layui/layui.js"></script>
+    <script type="text/javascript">
+        layui.config({
+            base : './layui'
+        }).extend({
+            selectN: './layui_extends/selectN',
+            selectM: './layui_extends/selectM',
+        }).use(['layer','form','jquery','selectN','selectM'],function(){
+            $ = layui.jquery;   
+            var form = layui.form
+            ,selectN = layui.selectN
+            ,selectM = layui.selectM;
+
+            //无限级分类-基本配置
+            var catIns1 = selectN({
+                //元素容器【必填】
+                 elem: '#cat_ids1'
+                ,search:[false,true]
+                //候选数据【必填】
+                ,data: catData
+            });
+        });
+        // $('#vr').change(function() {
+        //     $('select#bu').val($(this).val());
+        //     $('select#ag').val($(this).val());
+        // });
+        // $('#submit').on('click', function(){
+        //     let param = {};
+        //     param.type = 'erma';
+        //     param.version = $('select#vr').val();
+        //     param.ag = $('select#ag').find(':selected').attr('data-file');
+        //     param.bu = $('select#bu').find(':selected').attr('data-file');
+        //     $.post('home/upload',param,function(data){
+        //         console.log(data);
+        //         if(data.match('<b>Fatal')){
+        //             alert('submit error or file exists');
+        //         } else {
+        //             alert('submit successd');
+        //         }
+        //     })
+        // })
+        
+        var catData = [];
+        $.post('home/get_directory_file',{path:'upload'},function(data){
+            console.log(data);
+            if(data.match('<br />')){
+                alert('search file error');
+            } else {
+                data = JSON.parse(data);
+                let len = data.length;
+                let vr_reg = /Q(\d){1}FY(\d){4}/;
+               
+                $.each(data, function(i_, v_) {
+                    let k  = vr_reg.exec(v_)[0].replace(/FY(\d){2}/, ' FY');
+                    catData[i_] = {"id":i_,"name":k,"children":[{"id":i_+(len+2*i_),"name":v_}]};
+                })
+                console.log(catData);
+            }     
+        })
+    </script>
+</html>

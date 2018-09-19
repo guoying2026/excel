@@ -1,0 +1,6 @@
+vendor
+.idea
+.vagrant
+Vagrantfile
+/app/cache
+.DS_Store
