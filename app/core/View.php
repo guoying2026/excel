@@ -42,7 +42,6 @@ class View
         // 开发环境下关闭缓存
         $this->twig = new Twig_Environment($twigLoader);
         $this->twig->addGlobal('ASSET_ROOT', ASSET_ROOT);
-        $this->twig->addGlobal('HTTP_ROOT', HTTP_ROOT);
     }
 
     /**

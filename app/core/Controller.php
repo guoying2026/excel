@@ -11,7 +11,6 @@ class Controller
         'INC_ROOT' => INC_ROOT,
         'SITE_PATH' => SITE_PATH,
         'DOC_ROOT_1' => DOC_ROOT_1,
-        'HTTP_ROOT' => HTTP_ROOT,
         'USER_NAME' => USER_NAME,
     ];
     /**

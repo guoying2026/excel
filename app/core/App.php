@@ -40,7 +40,7 @@ class App
         }
   
         if(isset($routearr[0])){
-            $this->controller = $routearr[0];   
+            $this->controller = $routearr[0];
             unset($routearr[0]);                
         }
             
@@ -51,14 +51,19 @@ class App
             /*  当方法省略时,默认为index方法   */
             $this->action = 'index';
         }
-        $a = 2;
-        $suode = [];
-        while(isset($routearr[$a])){
-            $zhi = explode('=',trim($routearr[$a],'='));
-            $suode[] = [$zhi[0]=>$zhi[1]];
-            $a++;
+        if(isset($routearr[2])){
+            $a = 2;
+            $suode = [];
+            while(isset($routearr[$a])){
+                $zhi = explode('=',trim($routearr[$a],'='));
+                $suode[] = [$zhi[0]=>$zhi[1]];
+                $a++;
+            }
+            $this->params = $suode;
+        } else {
+            $this->params = [];
         }
-        $this->params = $suode;
+        
 
         require_once '../app/controllers/' . ucfirst($this->controller) . '.php';
 

@@ -1,18 +1,47 @@
 <!DOCTYPE html>
-<html class="unscrollable">
-  <head>
-	<meta charset="utf-8">
-	<meta name="REPET" value="notranslate">
-    <title>REPET v2.0</title>
-    <link rel="stylesheet" href="./css/display.css">
-	<link type="text/css" rel="stylesheet" href="./js/jQuery-TE_v.1.4.0/jquery-te-1.4.0.css">
-  </head>
-  <body>
-  	
-  </body>
-  <script type="text/javascript" src="./js/display.js" charset="utf-8"></script>
-  <script type="text/javascript" src="./js/jQuery-TE_v.1.4.0/uncompressed/jquery-te-1.4.0.js" charset="utf-8"></script>
-  <script type="text/javascript" src="./js/echarts.js" charset="utf-8"></script>
-  <script type="text/javascript" src="./js/d3.min.js" charset="utf-8"></script>
-  <script type="text/javascript" src="./js/jquery.tablesorter.min.js" charset="utf-8"></script>	
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Simple MVC</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" href="{{ASSET_ROOT}}/layui/css/layui.css">
+    </head>
+    <body class="layui-main">
+        <form class="layui-form">
+        <!-- 注意getenv()在IIS下获取不到正确ip地址，它适用于apache,$_SERVER都可以 -->
+            <blockquote class="layui-elem-quote" style="margin-top:30px">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Version:</label>
+                    <div id="cat_ids1">         
+                    </div>
+                </div> 
+            </blockquote>    
+        </form>
+    </body>
+    <script src="{{ASSET_ROOT}}/js/jquery-3.1.1.min.js"></script>
+    <script src="{{ASSET_ROOT}}/layui/layui.js"></script>
+    <script type="text/javascript">
+        //前端模板使用github上的twigphp/Twig,前端框架使用layui
+        //从控制器方法中得到的数据转化成Js可以使用的数据
+        var dest = "{{result |escape('js')}}";
+        console.log(catData);
+        var map = {},catData = [];
+        let len = catData.length;
+        for(let i = 0;i < len;i++){
+          let ai = dest[i];
+          let index = ai.findIndex
+          if(!map[ai.version]){
+            catData.push({
+              "version":ai.version,
+              "id":ai.file.id,
+              "children":[]
+            })
+          }
+        }
+    </script>
 </html>

@@ -14,14 +14,7 @@ define('DOC_ROOT_1', INC_ROOT .'\public\upload');
 require_once INC_ROOT . '/vendor/autoload.php';
 
 //在html中引用js时的目录
-define('HTTP_ROOT',
-    'http://'.$_SERVER['HTTP_HOST'].
-    str_replace(
-        $_SERVER['DOCUMENT_ROOT'],
-        '',
-        str_replace('\\', '/', INC_ROOT).'/public'
-    )
-);
+define('ASSET_ROOT','http://'.$_SERVER['HTTP_HOST']);
 
 define('CONTROL_URL',
     'http://'.$_SERVER['HTTP_HOST'].
@@ -29,15 +22,5 @@ define('CONTROL_URL',
         $_SERVER['DOCUMENT_ROOT'],
         '',
         str_replace('\\', '/', INC_ROOT)
-    )
-);
-
-// Root path for assets
-define('ASSET_ROOT',
-    'http://'.$_SERVER['HTTP_HOST'].
-    str_replace(
-        $_SERVER['DOCUMENT_ROOT'],
-        '',
-        str_replace('\\', '/', INC_ROOT).'/public'
     )
 );

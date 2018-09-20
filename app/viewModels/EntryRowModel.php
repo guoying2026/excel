@@ -13,13 +13,14 @@ class EntryRowModel extends Controller
 	/**
 	 * 根据文件id查询文件信息
      */
-	public function entry_row($condition){
+	public function entry_row(){
 		$result = DB::table("entry_row")
 					->join("entry","entry_row.e_r_id","=","entry.e_r_id")
-					->whereIn("entry_row.file_id",$condition)
+					->join("file","entry_row.file_id","=","file.id")
+					->whereIn("entry.column",['G','C'])
 					->where("entry.value_type",'=','400')
 					->where("entry_row.parent_id",'=','0')
-					->select('entry_row.file_id','entry_row.org_unit','entry_row.ref_number','entry.e_id','entry.e_r_id','entry.column','entry.value','entry.value_type')
+					->select('file.version','entry_row.file_id','entry_row.ref_number','entry.e_id','entry.e_r_id','entry.column','entry.value')
 					->get();
 		return $result;
 	}

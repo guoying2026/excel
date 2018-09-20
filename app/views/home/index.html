@@ -24,7 +24,7 @@
             
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="formDemo" id="submit" onclick="javascript: return false;">submit</button>
+                        <button class="layui-btn" lay-submit lay-filter="formDemo" id="submit">submit</button>
                     </div>
                 </div> 
             </blockquote>
@@ -39,6 +39,42 @@
     <script src="./js/jquery-3.1.1.min.js"></script>
     <script src="./layui/layui.js"></script>
     <script type="text/javascript">
+        var catData = [];
+        $.post('home/get_directory_file',{path:'upload'},function(data){
+            console.log(data);
+            if (data.match('<br />')) {
+                alert('search file error');
+            } else {
+                data = JSON.parse(data);
+                catData = data.reduce((s,v) => {
+                    let _tag = v.match(/Q(\d){1}FY(\d){4}/)[0];
+                    let index = s.findIndex(val=>val.name == _tag);
+                    if (!~index) {
+                        index = s.length;
+                        console.log(index);
+                        s.push({
+                            id:v,
+                            name: _tag,
+                            children:[]
+                        })
+                    }
+                    if (v.indexOf('BU') != -1) {
+                        s[index].children.push({
+                            id: v,
+                            name: v,
+                            children:[]
+                        })
+                    } else if(v.indexOf('Aggregated') != -1) {
+                        s[index].children[index].children.push({
+                            id: v,
+                            name: v,
+                        })
+                    }
+                    
+                    return s;
+                },[]);                
+            }     
+        })
         layui.config({
             base : './layui'
         }).extend({
@@ -58,43 +94,34 @@
                 //候选数据【必填】
                 ,data: catData
             });
+            //通过js动态选择
+            $('.set1').click(function(){
+                catIns1.set([6,10]);
+      
+            });
+            //监听重置按钮
+            $('form').find(':reset').click(function(){
+                $('form')[0].reset();
+                catIns1.set();//默认值
+                return false;
+            });
+            form.on('submit(formDemo)',function(data){
+                if(false == catIns1.isSelected){
+                    alert('Please select the end of the file');
+                } else {
+                    let param = {};
+                    param.version = catIns1.names[0];
+                    param.ag = catIns1.names[2];
+                    param.bu = catIns1.names[1];
+                    $.post('home/upload',param,function(data){
+                        if(data.match('<b>Fatal')){
+                            alert('submit error or file exists');
+                        } else {
+                            alert('submit successd');
+                        }
+                    })
+                }
+            })
         });
-        // $('#vr').change(function() {
-        //     $('select#bu').val($(this).val());
-        //     $('select#ag').val($(this).val());
-        // });
-        // $('#submit').on('click', function(){
-        //     let param = {};
-        //     param.type = 'erma';
-        //     param.version = $('select#vr').val();
-        //     param.ag = $('select#ag').find(':selected').attr('data-file');
-        //     param.bu = $('select#bu').find(':selected').attr('data-file');
-        //     $.post('home/upload',param,function(data){
-        //         console.log(data);
-        //         if(data.match('<b>Fatal')){
-        //             alert('submit error or file exists');
-        //         } else {
-        //             alert('submit successd');
-        //         }
-        //     })
-        // })
-        
-        var catData = [];
-        $.post('home/get_directory_file',{path:'upload'},function(data){
-            console.log(data);
-            if(data.match('<br />')){
-                alert('search file error');
-            } else {
-                data = JSON.parse(data);
-                let len = data.length;
-                let vr_reg = /Q(\d){1}FY(\d){4}/;
-               
-                $.each(data, function(i_, v_) {
-                    let k  = vr_reg.exec(v_)[0].replace(/FY(\d){2}/, ' FY');
-                    catData[i_] = {"id":i_,"name":k,"children":[{"id":i_+(len+2*i_),"name":v_}]};
-                })
-                console.log(catData);
-            }     
-        })
     </script>
 </html>
