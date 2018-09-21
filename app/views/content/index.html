@@ -16,32 +16,133 @@
         <!-- 注意getenv()在IIS下获取不到正确ip地址，它适用于apache,$_SERVER都可以 -->
             <blockquote class="layui-elem-quote" style="margin-top:30px">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">Version:</label>
                     <div id="cat_ids1">         
                     </div>
                 </div> 
-            </blockquote>    
+            </blockquote> 
+            <div id="main" style="width:500px;height:200px"></div>
+            <table class="layui-table">
+              <colgroup>
+                <col width="150">
+                <col width="200">
+                <col>
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>昵称</th>
+                  <th>加入时间</th>
+                  <th>签名</th>
+                </tr> 
+              </thead>
+              <tbody>
+                <tr>
+                  <td>贤心</td>
+                  <td>2016-11-29</td>
+                  <td>人生就像是一场修行</td>
+                </tr>
+                <tr>
+                  <td>许闲心</td>
+                  <td>2016-11-28</td>
+                  <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
+                </tr>
+              </tbody>
+            </table>
         </form>
     </body>
     <script src="{{ASSET_ROOT}}/js/jquery-3.1.1.min.js"></script>
     <script src="{{ASSET_ROOT}}/layui/layui.js"></script>
+    <script src="{{ASSET_ROOT}}/js/echarts.js"></script>
     <script type="text/javascript">
         //前端模板使用github上的twigphp/Twig,前端框架使用layui
         //从控制器方法中得到的数据转化成Js可以使用的数据
-        var dest = "{{result |escape('js')}}";
-        console.log(catData);
-        var map = {},catData = [];
-        let len = catData.length;
-        for(let i = 0;i < len;i++){
-          let ai = dest[i];
-          let index = ai.findIndex
-          if(!map[ai.version]){
-            catData.push({
-              "version":ai.version,
-              "id":ai.file.id,
-              "children":[]
-            })
+        let catData = "{{result |escape('js')}}";
+        catDatas = JSON.parse(catData);
+        let len = catDatas.length;
+        let newarr = [];
+        for (let i = 0;i < len;i++) {
+          if(i % 2 == 0){
+            catDatas[i].ref_number += '/'+catDatas[i].value+'/'+catDatas[i+1].value;
+            delete catDatas[i].value;
+            let index = newarr.length;
+            newarr[index] = catDatas[i];
           }
         }
+        let leng = newarr.length;
+        let swoxiaoyao = [];
+        for (let i = 0;i < leng;i++){
+          let index = swoxiaoyao.findIndex(val=>val.name == newarr[i].version);
+          if(!~index){
+            index = swoxiaoyao.length;
+            swoxiaoyao.push({
+              "id":newarr[i].file_id,
+              "name": newarr[i].version,
+              children:[]
+            })
+          } 
+          swoxiaoyao[index].children.push({
+            "id":newarr[i].e_r_id,
+            "name":newarr[i].ref_number
+          })
+        }
+        layui.config({
+            base : '{{ASSET_ROOT}}/layui'
+        }).extend({
+            selectN: './layui_extends/selectN',
+            selectM: './layui_extends/selectM',
+        }).use(['layer','form','jquery','selectN','selectM'],function(){
+            $ = layui.jquery;   
+            var form = layui.form
+            ,selectN = layui.selectN
+            ,selectM = layui.selectM;
+
+            //无限级分类-基本配置
+            var catIns1 = selectN({
+                //元素容器【必填】
+                 elem: '#cat_ids1'
+                ,search:[false,true]
+                //候选数据【必填】
+                ,data: swoxiaoyao
+                ,width:[150,750]
+                ,tips:['version','CHN']
+            });
+            //通过js动态选择
+            $('.set1').click(function(){
+                catIns1.set([6,10]);
+            });
+            form.on('submit(formDemo)',function(data){
+                if(false == catIns1.isSelected){
+                    alert('Please select the end of the file');
+                } else {
+                    let param = {};
+                    param.version = catIns1.names[0];
+                    param.ag = catIns1.names[2];
+                    param.bu = catIns1.names[1];
+                    $.post('home/upload',param,function(data){
+                        if(data.match('<b>Fatal')){
+                            alert('submit error or file exists');
+                        } else {
+                            alert('submit successd');
+                        }
+                    })
+                }
+            })
+        });
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            series: {
+                type: 'pie',
+                data: [
+                    {name: 'A', value: 1212},
+                    {name: 'B', value: 2323},
+                    {name: 'C', value: 1919}
+                ]
+            }
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
     </script>
 </html>

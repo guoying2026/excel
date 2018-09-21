@@ -9,7 +9,7 @@ class Content extends Controller
 	public function index(){
 		$EntryRowModel = $this->viewModels('EntryRowModel');
 		$result = $EntryRowModel->entry_row();
-		// var_dump($result);
+		
 		$this->arr['result'] = $result;
 		$this->view('content/index',$this->arr);
 	}

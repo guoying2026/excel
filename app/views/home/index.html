@@ -15,21 +15,20 @@
         <form class="layui-form">
         <!-- 注意getenv()在IIS下获取不到正确ip地址，它适用于apache,$_SERVER都可以 -->
             <blockquote class="layui-elem-quote" style="margin-top:30px">Please provide network accessible (for user {{ USER_NAME }}) addresses for the 2 spreadsheets.</blockquote>
-            <blockquote class="layui-elem-quote" style="margin-top:30px">
+            <blockquote class="layui-elem-quote" style="margin-top:30px;">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">Version:</label>
                     <div id="cat_ids1">         
                     </div>
                 </div>
             
                 <div class="layui-form-item">
-                    <div class="layui-input-block">
+                    <div class="layui-input-block" style="margin-left:0px">
                         <button class="layui-btn" lay-submit lay-filter="formDemo" id="submit">submit</button>
                     </div>
                 </div> 
             </blockquote>
             <blockquote class="layui-elem-quote" style="margin-top:30px">
-                <div class="layui-btn-container" style="margin-left:108px">
+                <div class="layui-btn-container" style="margin-left:0px">
                     <a href="content/index" class="layui-btn layui-btn-normal">View data</a> 
                     <a href="content/truncate" class="layui-btn layui-btn-danger">Delete all data</a> 
                 </div>
@@ -41,7 +40,6 @@
     <script type="text/javascript">
         var catData = [];
         $.post('home/get_directory_file',{path:'upload'},function(data){
-            console.log(data);
             if (data.match('<br />')) {
                 alert('search file error');
             } else {
@@ -49,9 +47,9 @@
                 catData = data.reduce((s,v) => {
                     let _tag = v.match(/Q(\d){1}FY(\d){4}/)[0];
                     let index = s.findIndex(val=>val.name == _tag);
+                    console.log(s);
                     if (!~index) {
                         index = s.length;
-                        console.log(index);
                         s.push({
                             id:v,
                             name: _tag,
@@ -93,18 +91,15 @@
                 ,search:[false,true]
                 //候选数据【必填】
                 ,data: catData
+                ,width:[100,450,450]
+                ,tips:['version','BU','ERM']
             });
             //通过js动态选择
             $('.set1').click(function(){
                 catIns1.set([6,10]);
       
             });
-            //监听重置按钮
-            $('form').find(':reset').click(function(){
-                $('form')[0].reset();
-                catIns1.set();//默认值
-                return false;
-            });
+      
             form.on('submit(formDemo)',function(data){
                 if(false == catIns1.isSelected){
                     alert('Please select the end of the file');

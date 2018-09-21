@@ -17,10 +17,10 @@ class EntryRowModel extends Controller
 		$result = DB::table("entry_row")
 					->join("entry","entry_row.e_r_id","=","entry.e_r_id")
 					->join("file","entry_row.file_id","=","file.id")
-					->whereIn("entry.column",['G','C'])
+					->whereIn("entry.column",['C','G'])
 					->where("entry.value_type",'=','400')
 					->where("entry_row.parent_id",'=','0')
-					->select('file.version','entry_row.file_id','entry_row.ref_number','entry.e_id','entry.e_r_id','entry.column','entry.value')
+					->select('entry_row.file_id','file.version','entry.e_r_id','entry_row.ref_number','entry.value')
 					->get();
 		return $result;
 	}
