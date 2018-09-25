@@ -31,14 +31,15 @@
               </colgroup> -->
               <thead>
                 <tr>
-                  <th>Exp</th>
-                  <th>LV.</th>
-                  <th>RP Cmpl.%</th>
+                  <th>LCCHN Q4/FY17</th>
+                  <th>Ref.#</th>
+                  <th>Risk-Description(incl.Cause and Effect)-Detailed Measures-Description</th>
+
                   <th>Org unit</th>
                   <th>Entry</th>
                   <th>category</th>
                   <th>category name</th>
-                  <th>Expected Mitigation</th>
+                  <th>LCCHN(proposal) Q1/FY18</th>
                 </tr> 
               </thead>
               <tbody></tbody>
@@ -123,22 +124,5 @@
                 return false;
             })
         });
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('main'));
-
-        // 指定图表的配置项和数据
-        var option = {
-            series: {
-                type: 'pie',
-                data: [
-                    {name: 'A', value: 1212},
-                    {name: 'B', value: 2323},
-                    {name: 'C', value: 1919}
-                ]
-            }
-        };
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
     </script>
 </html>

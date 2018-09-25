@@ -16,19 +16,19 @@
         <!-- 注意getenv()在IIS下获取不到正确ip地址，它适用于apache,$_SERVER都可以 -->
             <blockquote class="layui-elem-quote" style="margin-top:30px">Please provide network accessible (for user {{ USER_NAME }}) addresses for the 2 spreadsheets.</blockquote>
             <blockquote class="layui-elem-quote" style="margin-top:30px;">
-                <div class="layui-form-item">
+                <div class="layui-form-item" style="margin-left:54px">
                     <div id="cat_ids1">         
                     </div>
                 </div>
             
                 <div class="layui-form-item">
-                    <div class="layui-input-block" style="margin-left:0px">
+                    <div class="layui-input-block">
                         <button class="layui-btn" lay-submit lay-filter="formDemo" id="submit">submit</button>
                     </div>
                 </div> 
             </blockquote>
             <blockquote class="layui-elem-quote" style="margin-top:30px">
-                <div class="layui-btn-container" style="margin-left:0px">
+                <div class="layui-btn-container" style="margin-left:108px">
                     <a href="content/index" class="layui-btn layui-btn-normal">View data</a> 
                     <a href="content/truncate" class="layui-btn layui-btn-danger">Delete all data</a> 
                 </div>
@@ -91,15 +91,9 @@
                 ,search:[false,true]
                 //候选数据【必填】
                 ,data: catData
-                ,width:[100,450,450]
+                ,width:[120,440,440]
                 ,tips:['version','BU','ERM']
             });
-            //通过js动态选择
-            $('.set1').click(function(){
-                catIns1.set([6,10]);
-      
-            });
-      
             form.on('submit(formDemo)',function(data){
                 if(false == catIns1.isSelected){
                     alert('Please select the end of the file');
@@ -109,13 +103,15 @@
                     param.ag = catIns1.names[2];
                     param.bu = catIns1.names[1];
                     $.post('home/upload',param,function(data){
-                        if(data.match('<b>Fatal')){
-                            alert('submit error or file exists');
-                        } else {
+                        console.log(data);
+                        if(!data.match('<b>Fatal')){
                             alert('submit successd');
+                        } else {
+                            alert('submit error or file exists');
                         }
                     })
                 }
+                return false;
             })
         });
     </script>

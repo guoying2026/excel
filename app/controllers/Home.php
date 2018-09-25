@@ -48,7 +48,9 @@ class Home extends Controller
         //获取文件中所有的内容
         $result1 = $this->halldeFile($data1['filepath']);
         //将文件中的数据存到对应表中
-        $this->save_table_file1($result1,$data1,$file1);
+        if($file1['id'] != '' && $file1['id'] != null){
+            $this->save_table_file1($result1,$data1,$file1);
+        }
         
         $data2['filepath'] = DOC_ROOT_1.'//'.$condition['bu'];
         $data2['version'] = $condition['version'];
@@ -61,8 +63,11 @@ class Home extends Controller
         $file2 = $FileModel->c_or_u_file($data2);
         //获取文件中所有的内容
         $result2 = $this->halldeFile($data2['filepath']);
-        //将文件中的数据存到对应表中
-        $this->save_table_file2($result2,$data2,$file2);
+        if($file2['id'] != '' && $file2['id'] != null){
+           //将文件中的数据存到对应表中
+            $this->save_table_file2($result2,$data2,$file2);
+        }
+        
     }
     /**
      * 调用工厂模式 获得所读文件的所有内容
@@ -115,11 +120,13 @@ class Home extends Controller
                         break;
                 }
                 foreach($v as $key => $val){
-                    $con['e_r_id'] = $entryrow['id'];
-                    $con['column'] = $key;
-                    $con['value'] = $val;
-                    $con['value_type'] = $value_type;
-                    $entry = $EntryModel->create_entry($con);
+                    if($entryrow['id'] != null){
+                        $con['e_r_id'] = $entryrow['id'];
+                        $con['column'] = $key;
+                        $con['value'] = $val;
+                        $con['value_type'] = $value_type;
+                        $entry = $EntryModel->create_entry($con); 
+                    }
                 }
                 $j++;
             }
@@ -148,7 +155,7 @@ class Home extends Controller
                 $condm = [];
                 $condetailed = [];
                 foreach($v as $key => $val){
-                    if($i <= $data2['field_num']){
+                    if($i <= $data2['field_num'] && $entryrow['id'] != ''){
                         $con['e_r_id'] = $entryrow['id'];
                         $con['column'] = $key;
                         $con['value'] = $val;
