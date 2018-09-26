@@ -24,11 +24,6 @@
         </form>
         <div id="main" style="width:500px;height:200px"></div>
             <table class="layui-table">
-              <!-- <colgroup>
-                <col width="200">
-                <col width="200">
-                <col>
-              </colgroup> -->
               <thead>
                 <tr>
                   <th>Exp</th>
@@ -107,8 +102,11 @@
                 } else {
                     $("tbody").empty();
                     let params = {};
+                    params.version = catIns1.names[0];
+                    params.ref_number = catIns1.names[1].split('/')[0];
                     params.e_r_id = catIns1.lastValue;
-                    console.log(data.field);
+                    // console.log(data.field);
+                    console.log(catIns1.names[0]);
                     $.post('{{ASSET_ROOT}}/content/entry',params,function(data){
                         data = JSON.parse(data);
                         console.log(data);
@@ -117,12 +115,20 @@
                         for (let i=0;i<len;i++){
                             arr[i] = data[i]['value'];
                         }
-                        $("tbody").append('<tr e_r_id='+data[0]['e_r_id']+'><td>'+arr[5]+'</td><td>'+arr[8]+'<td/><td>'+arr[7]+'%</td><td>'+arr[0]+'</td><td><a href="{{ASSET_ROOT}}/content/substance">'+arr[1]+'/'+arr[2]+'</a></td><td>'+arr[3]+'</td><td>'+arr[4]+'</td><td>'+arr[6]+'</td></tr>');
+                        $("tbody").append('<tr e_r_id='+data[0]['e_r_id']+'><td>'+arr[5]+'</td><td>'+arr[8]+'<td/><td>'+arr[7]+'%</td><td>'+arr[0]+'</td><td><a a_version='+catIns1.names[0]+' a_e_r_id='+catIns1.lastValue+' a_ref_number='+params.ref_number+' onclick="substance(this)">'+arr[1]+'/'+arr[2]+'</a></td><td>'+arr[3]+'</td><td>'+arr[4]+'</td><td>'+arr[6]+'</td></tr>');
                     })
                 }
                 return false;
             })
+
         });
+            function substance(obj){
+                let params = [];
+                params['version'] = $(obj).attr('a_version');
+                params['id'] = $(obj).attr('a_e_r_id');
+                params['ref_number'] = $(obj).attr('a_ref_number');
+                window.location = '{{ASSET_ROOT}}/content/substance/version='+params["version"]+'/id='+params['id']+'/ref_number='+params['ref_number'];
+            }
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('main'));
 

@@ -15,10 +15,6 @@ class EntryModel extends Controller
 		]);
 		return $result;
 	}
-	// public function create_entry($condition){
-	// 	$result = $this->model('Entry')::create($condition);
-	// 	return $result;
-	// }
 	/**
 	 * 向entry表中提取表格基本信息
 	 */
@@ -36,8 +32,9 @@ class EntryModel extends Controller
 		$result = DB::table('entry')
 					->join('entry_row','entry_row.id','=','entry.e_r_id')
 					->where("entry_row.id",'=',$condition['id'])
-					->where('entry_row.parent_id','=',$condition['id'])
+					->orwhere('entry_row.parent_id','=',$condition['id'])
 					->whereIn('entry.value_type',['200','400'])
+					->whereIn('entry.column',['B','C','D','M','Q','AA','AB','AC','AE','AF'])
 					->select('entry_row.*','entry.column','entry.value','entry.value_type')
 					->get();
 		return $result;

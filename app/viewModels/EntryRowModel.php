@@ -18,10 +18,7 @@ class EntryRowModel extends Controller
 		]);
 		return $result;
 	}
-	// public function create_entry_row($condition){
-	// 	$result = $this->model('EntryRow')::create($condition);
-	// 	return $result;
-	// }
+
 	/**
 	 * 根据文件id查询文件信息
      */
@@ -33,6 +30,20 @@ class EntryRowModel extends Controller
 					->where("entry.value_type",'=','400')
 					->where("entry_row.parent_id",'=','0')
 					->select('entry_row.file_id','file.version','entry.e_r_id','entry_row.ref_number','entry.value')
+					->get();
+		return $result;
+	}
+	/**
+	 * 根据e_r_id查询detailed,联查3张表
+     */
+	public function substance($condition){
+		$result = DB::table("entry_row")
+					->join("entry","entry_row.id",'=','entry.e_r_id')
+					->join("detailed_measure","entry_row.id",'=','detailed_measure.e_r_id')
+					->join("detailed",'detailed_measure.id','=','detailed.d_m_id')
+					->whereIn("entry_row.ref_number",$condition)
+					->whereIn("entry.column",['D','AE'])
+					->where("entry_row.parent_id",'=','')
 					->get();
 		return $result;
 	}
