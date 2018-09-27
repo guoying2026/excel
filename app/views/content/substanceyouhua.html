@@ -51,64 +51,64 @@
                   <tr class="sometr">
                     <td colspan="3">Trend compared to prior quater:</td>
                     {% for department in filesub %}
-                    <td class="wingdings column_AF org_unit_{{department.org_unit}}"  style="text-align: center">
+                    <td class="wingdings column_AF_{{department.org_unit}}"  style="text-align: center">
                     </td>
                     {% endfor %}
-                    <td class="wingdings column_AF org_unit_CHN" style="text-align: center">
+                    <td class="wingdings column_AF_CHN" style="text-align: center">
                     </td>
                   </tr>
                   <tr class="sometr">
                     <td colspan="3">Degree of response plan completion:</td>
                     {% for department in filesub %}
-                    <td style="text-align: center" class="column_AE org_unit_{{department.org_unit}}">
+                    <td style="text-align: center" class="column_AE_{{department.org_unit}}">
                     </td>
                     {% endfor %}
-                    <td style="text-align: center" class="column_AE org_unit_CHN">
+                    <td style="text-align: center" class="column_AE_CHN">
                     </td>
                   </tr>
                   <tr class="sometr">
                     <td colspan="3">Response strategy:</td>
                     {% for department in filesub %}
-                    <td style="text-align: center" class="column_AA org_unit_{{department.org_unit}}">
+                    <td style="text-align: center" class="column_AA_{{department.org_unit}}">
                     </td>
                     {% endfor %}
-                    <td style="text-align: center" class="column_AA org_unit_CHN">
+                    <td style="text-align: center" class="column_AA_CHN">
                     </td>
                   </tr>
                   <tr class="sometr">
                     <td colspan="3">Expected mitigation date:</td>
                     {% for department in filesub %}
-                    <td style="text-align: center" class="column_AC org_unit_{{department.org_unit}}">
+                    <td style="text-align: center" class="column_AC_{{department.org_unit}}">
                     </td>
                     {% endfor %}
-                    <td style="text-align: center" class="column_AC org_unit_CHN">
+                    <td style="text-align: center" class="column_AC_CHN">
                     </td>
                   </tr>
                   <tr class="sometr">
                     <td colspan="3">Target exposure level:</td>
                     {% for department in filesub %}
-                    <td class="tdcolor_{{department.org_unit}}_ab column_AB org_unit_{{department.org_unit}}" style="text-align: center;">
+                    <td class="tdcolor_{{department.org_unit}}_ab column_AB_{{department.org_unit}}" style="text-align: center;">
                         <span></span>
                     </td>
                     {% endfor %}
-                    <td class="tdcolor_chn_ab column_AB org_unit_CHN" style="text-align: center">
+                    <td class="tdcolor_chn_ab column_AB_CHN" style="text-align: center">
                         <span></span>
                     </td>
                   </tr>
                   <tr>
-                    <td class="tdcolor_chn_m column_M org_unit_CHN">
+                    <td class="tdcolor_chn_m column_M_CHN">
                         <span></span>
                     </td>
-                     <td class="column_B org_unit_CHN"></td>
-                     <td class="column_C org_unit_CHN column_D">
+                     <td class="column_B_CHN"></td>
+                     <td class="column_C_D_CHN">
                         <div id="main" style="width:auto;height:4px"></div>
                     </td>
                     {% for department in filesub %}
-                    <td class="tdcolor_{{department.org_unit}}_chn column_Q org_unit_{{department.org_unit}}">
+                    <td class="tdcolor_{{department.org_unit}}_chn column_Q_{{department.org_unit}}">
                         <span></span>
                     </td>
                     {% endfor %}
-                    <td class="tdcolor_chn_q column_Q org_unit_CHN" style="border-width:2px;border-top-color:#000;border-bottom-color:#000;border-right-color:#000;border-left-color:#000;cursor:pointer;" ondblclick="levelchoose(this)">
+                    <td class="tdcolor_chn_q column_Q_CHN" style="border-width:2px;border-top-color:#000;border-bottom-color:#000;border-right-color:#000;border-left-color:#000;cursor:pointer;" ondblclick="levelchoose(this)">
                         <span></span>
                     </td>
                   </tr>
@@ -227,17 +227,39 @@
     <script src="{{ASSET_ROOT}}/layui/layui.js"></script>
     <script src="{{ASSET_ROOT}}/js/echarts.js"></script>
     <script type="text/javascript">
+        let catData1 = "{{filesub |escape('js')}}";
+        catData1 = JSON.parse(catData1);
+        let arr = ['B-CHN','C-CHN','D-CHN','M-CHN','Q-CHN','AA-CHN','AB-CHN','AC-CHN','AE-CHN','AF-CHN'];
+        for(var i in catData1){
+            let temp_org_unit = catData1[i]['org_unit'];
+            arr.push('B-'+temp_org_unit);
+            arr.push('C-'+temp_org_unit);
+            arr.push('D-'+temp_org_unit);
+            arr.push('M-'+temp_org_unit);
+            arr.push('Q-'+temp_org_unit);
+            arr.push('AA-'+temp_org_unit);
+            arr.push('AB-'+temp_org_unit);
+            arr.push('AC-'+temp_org_unit);
+            arr.push('AE-'+temp_org_unit);
+            arr.push('AF-'+temp_org_unit);
+        }
+        console.log(arr);
         //前端模板使用github上的twigphp/Twig,前端框架使用layui
         //从控制器方法中得到的数据转化成Js可以使用的数据
         let catData = "{{entrysub |escape('js')}}";
         catDatas = JSON.parse(catData);
-        $.each(catDatas,function(index,value){
-            if(value.ref_number != 'Ref.Number'){
-                let ref = value.ref_number.split('_');
+        $.each(catDatas,function(index,val){
+            if(val.ref_number != 'Ref.Number'){
+                let ref = val.ref_number.split('_');
                 let len = ref.length-2;
-                let arr = ['B','C','D','M','Q','AA','AB','AC','AE','AF'];
-                if($.inArray(value.column,arr) > 0){
-                    $('".column_'+value.column+' .org_unit_'+ref[len]+'"').attr('text',value);
+                let str1 = val.column+'-'+ref[len];
+                let tmpdom = $('.column_'+val.column+'_'+ref[len])
+                if($.inArray(str1,arr) > 0){
+                    if(tmpdom.children().length > 0){
+                        tmpdom.find('span').html(val.value);
+                    } else {
+                        tmpdom.html(val.value);
+                    }
                 }
             }
         })
