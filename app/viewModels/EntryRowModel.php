@@ -38,13 +38,27 @@ class EntryRowModel extends Controller
      */
 	public function substance($condition){
 		$result = DB::table("entry_row")
-					->join("entry","entry_row.id",'=','entry.e_r_id')
 					->join("detailed_measure","entry_row.id",'=','detailed_measure.e_r_id')
 					->join("detailed",'detailed_measure.id','=','detailed.d_m_id')
 					->whereIn("entry_row.ref_number",$condition)
-					->whereIn("entry.column",['D','AE'])
 					->where("entry_row.parent_id",'=','')
 					->get();
+		return $result;
+	}
+	/**
+	 * 根据e_r_id查询entry,联查2张表
+     */
+	public function entryd_ae($condition){
+		$result = DB::table('entry_row')
+					->join("entry","entry_row.id",'=','entry.e_r_id')
+					->whereIn("entry.column",['D','AE'])
+					->whereIn("entry_row.ref_number",$condition)
+					->where("entry_row.parent_id",'=','')
+					->get();
+		return $result;
+	}
+	public function update_comment($condition){
+		$result = $this->model('EntryRow')::where('id',$condition['e_r_id'])->update(['comment'=>$condition['comment']]);
 		return $result;
 	}
 }

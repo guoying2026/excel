@@ -35,11 +35,6 @@
         </form>
         <div id="main" style="width:500px;height:10px"></div>
             <table class="layui-table">
-              <!-- <colgroup>
-                <col width="200">
-                <col width="200">
-                <col>
-              </colgroup> -->
               <thead>
                 <tr style="background-color:#B0E2FF;color:#3D3D3D"">
                   <th>LCCHN Q4/FY17</th>
@@ -56,7 +51,7 @@
                   <tr class="sometr">
                     <td colspan="3">Trend compared to prior quater:</td>
                     {% for department in filesub %}
-                    <td class="wingdings td_{{department.org_unit}}"  style="text-align: center">
+                    <td class="wingdings"  style="text-align: center">
                         {% for info in entrysub %}
                             {% if info.column == 'AF' and department.org_unit in info.ref_number %}
                                 {{info.value}}
@@ -75,7 +70,7 @@
                   <tr class="sometr">
                     <td colspan="3">Degree of response plan completion:</td>
                     {% for department in filesub %}
-                    <td class="td_{{department.org_unit}}"  style="text-align: center">
+                    <td style="text-align: center">
                         {% for info in entrysub %}
                             {% if info.column == 'AE' and department.org_unit in info.ref_number %}
                                 {{info.value}}%
@@ -94,7 +89,7 @@
                   <tr class="sometr">
                     <td colspan="3">Response strategy:</td>
                     {% for department in filesub %}
-                    <td class="td_{{department.org_unit}}"  style="text-align: center">
+                    <td style="text-align: center">
                         {% for info in entrysub %}
                             {% if info.column == 'AA' and department.org_unit in info.ref_number %}
                                 {{info.value}}
@@ -113,7 +108,7 @@
                   <tr class="sometr">
                     <td colspan="3">Expected mitigation date:</td>
                     {% for department in filesub %}
-                    <td class="td_{{department.org_unit}}"  style="text-align: center">
+                    <td style="text-align: center">
                         {% for info in entrysub %}
                             {% if info.column == 'AC' and department.org_unit in info.ref_number %}
                                 {{info.value}}
@@ -132,25 +127,71 @@
                   <tr class="sometr">
                     <td colspan="3">Target exposure level:</td>
                     {% for department in filesub %}
-                    <td class="td_{{department.org_unit}}" style="text-align: center;">
+                    <td class="tdcolor_{{department.org_unit}}_ab" style="text-align: center;">
                         {% for info in entrysub %}
                             {% if info.column == 'AB' and department.org_unit in info.ref_number %}
-                                {{info.value}}
+                                <span>{{info.value}}</span>
                             {% endif %}
                         {% endfor %}
                     </td>
                     {% endfor %}
-                    <td style="text-align: center">
+                    <td class="tdcolor_chn_ab" style="text-align: center">
                         {% for info in entrysub %}
                             {% if info.column == 'AB' and info.org_unit == 'CHN' %}
-                                {{info.value}}
+                                <span>{{info.value}}</span>
                             {% endif %}
                         {% endfor %}
                     </td>
                   </tr>
                   <tr>
+                     <td class="tdcolor_chn_m">{% for info in entrysub %}
+                            {% if info.column == 'M' and info.org_unit == 'CHN' %}
+                                <span>{{info.value}}</span>
+                            {% endif %}
+                        {% endfor %}</td>
+                     <td>{% for info in entrysub %}
+                            {% if info.column == 'B' and info.org_unit == 'CHN' %}
+                                {{info.value}}
+                            {% endif %}
+                        {% endfor %}</td>
+                     <td>{% for info in entrysub %}
+                            {% if info.column == 'C' and info.org_unit == 'CHN' %}
+                                {{info.value}}
+                            {% endif %}
+                        {% endfor %}
+                        <div id="main" style="width:auto;height:4px"></div>
+                        {% for info in entrysub %}
+                            {% if info.column == 'D' and info.org_unit == 'CHN' %}
+                                {{info.value}}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    {% for department in filesub %}
+                    <td class="tdcolor_{{department.org_unit}}_chn">
+                        {% for info in entrysub %}
+                            {% if info.column == 'Q' and department.org_unit in info.ref_number %}
+                                <span>{{info.value}}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    {% endfor %}
+                    <td class="tdcolor_chn_q" style="border-width:2px;border-top-color:#000;border-bottom-color:#000;border-right-color:#000;border-left-color:#000;cursor:pointer;" ondblclick="levelchoose(this)">
+                        {% for info in entrysub %}
+                        {% if info.column == 'Q' and info.org_unit == 'CHN' %}
+                            <span>{{info.value}}</span>
+                        {% endif %}
+                        {% endfor %}
+                    </td>
+                  </tr>
+                  <tr>
                     <td>CHN</td><td>CHN</td>
-                    <td colspan="{{ countdeparentment-2 }}"></td>
+                    <td colspan="{{ countdeparentment-2 }}" style="border-width:2px;border-top-color:#000;border-bottom-color:#000;border-right-color:#000;border-left-color:#000;cursor:pointer;" a_e_r_id="{{condition.id}}" id="chntext">{% set i = 0 %}
+                                    {% for info in entrysub %}
+                                        {% if info.id == condition.id and i == 0 %}
+                                        {{info.comment}}
+                                        {% set i=i+1 %}
+                                        {% endif %}
+                                    {% endfor %}</td>
                   </tr>
               </tbody>
             </table>
@@ -167,11 +208,11 @@
                         <tbody>
                             {% for department in filesub %}
                             <tr>
-                                <td rowspan="2">{{department.org_unit}}</td>
+                                <td rowspan="2" style="background-color:#B0E2FF">{{department.org_unit}}</td>
                                 <td>Description</td>
-                                <td>
+                                <td colspan="2">
                                     {% set i = 0 %}
-                                    {% for info in all %}
+                                    {% for info in entryd_ae %}
                                         {% if info.column == 'D' and department.org_unit in info.org_unit and i == 0 %}
                                         {{info.value}}
                                         {% set i=i+1 %}
@@ -181,9 +222,9 @@
                             </tr>
                             <tr>
                                 <td>Response Plan</td>
-                                <td>
+                                <td colspan="2">
                                     {% set j = 0 %}
-                                    {% for info in all %}
+                                    {% for info in entryd_ae %}
                                         {% if info.column == 'AE' and department.org_unit in info.org_unit and j == 0 %}
                                         {{info.value}}
                                         {% set j=j+1 %}
@@ -191,15 +232,71 @@
                                     {% endfor %}
                                 </td>
                             </tr>
+                            <tr style="background-color: #EDEDED">
+                                <td>DM NO.</td>
+                                <td>Measures</td>
+                                <td>Status/Comment</td>
+                            </tr>
+                            {% for info in all %}
+                            {% if info.org_unit == department.org_unit %}
+                            <tr>
+                                <td>{{info.dm_no}}</td>
+                                <td>{{info.detailed_measure}}</td>
+                                <td>{{info.status_comment}}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-                <div class="layui-tab-item">2</div>
-                <div class="layui-tab-item">3</div>
-                <div class="layui-tab-item">4</div>
-                <div class="layui-tab-item">5</div>
-                <div class="layui-tab-item">6</div>
+                {% for department in filesub %}
+                <div class="layui-tab-item">
+                    <table class="layui-table">
+                        <tbody>
+                            <tr>
+                                <td rowspan="2" style="background-color:#B0E2FF">{{department.org_unit}}</td>
+                                <td>Description</td>
+                                <td colspan="2">
+                                    {% set i = 0 %}
+                                    {% for info in entryd_ae %}
+                                        {% if info.column == 'D' and department.org_unit in info.org_unit and i == 0 %}
+                                        {{info.value}}
+                                        {% set i=i+1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Response Plan</td>
+                                <td colspan="2">
+                                    {% set j = 0 %}
+                                    {% for info in entryd_ae %}
+                                        {% if info.column == 'AE' and department.org_unit in info.org_unit and j == 0 %}
+                                        {{info.value}}
+                                        {% set j=j+1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr style="background-color: #EDEDED">
+                                <td>DM NO.</td>
+                                <td>Measures</td>
+                                <td>Status/Comment</td>
+                            </tr>
+                            {% for info in all %}
+                            {% if info.org_unit == department.org_unit %}
+                            <tr>
+                                <td>{{info.dm_no}}</td>
+                                <td>{{info.detailed_measure}}</td>
+                                <td>{{info.status_comment}}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endfor %}
               </div>
             </div>
     </body>
@@ -209,9 +306,56 @@
     <script type="text/javascript">
         //前端模板使用github上的twigphp/Twig,前端框架使用layui
         //从控制器方法中得到的数据转化成Js可以使用的数据
-        let catData = "{{all |escape('js')}}";
+        let catData = "{{entrysub |escape('js')}}";
         catDatas = JSON.parse(catData);
         console.log(catDatas);
+        layui.use('layer',function(){
+            var layer = layui.layer;
+        })
+        $("td[class^='tdcolor_']").each(function(){
+            switch($(this).find('span').text()){
+                case 'Low':
+                    $(this).css('background-color','#C1FFC1');
+                    break;
+                case 'High':
+                    $(this).css('background-color','#FF4040');
+                    break;
+                case 'Medium':
+                    $(this).css('background-color','#FFF68F');
+                    break;
+            }
+        })
+        function levelchoose(obj){
+            console.log(2);
+            // '<select name="level" lay-ver><option value="">choose</option><option value="Major">Major</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>';
+        }
+        $("#chntext").dblclick(function(){
+            let tdtext = $(this).text();
+            console.log(tdtext);
+            $(this).empty();
+            $(this).append('<textarea style="width:800px;height:200px" onblur="lcchn_proposal(this)" a_e_r_id="'+$(this).attr('a_e_r_id')+'" value="'+tdtext+'" style="text-align:left">'+tdtext+'</textarea>');
+            $("textarea").focus();
+        })
+        function lcchn_proposal(obj){
+            let param = {};
+            param.e_r_id = $(obj).attr('a_e_r_id');
+            param.comment = $(obj).val();
+            console.log(param);
+            var index = layer.load(2);
+            
+            $.post('{{ASSET_ROOT}}/content/update_comment',param,function(data){
+                layer.close(index);
+                console.log(data);
+                if(!data.match('<b>Fatal')){
+                    alert('save successd');
+                    let tddom = $(obj).parent();
+                    tddom.empty();
+                    tddom.html(param.comment);
+                } else {
+                    alert('save error');
+                }
+            })
+        }
         layui.use('element', function(){
             var element = layui.element;
   

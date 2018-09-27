@@ -30,13 +30,16 @@ class Content extends Controller
 		$FileModel = $this->viewModels('FileModel');
 		$EntryModel = $this->viewModels('EntryModel');
 		$EntryRowModel = $this->viewModels('EntryRowModel');
+
 		//根据version查找季度有事的部门
 		$this->arr['filesub'] = $FileModel->substance($condition);
 		//根entry_row表id查找entry信息
 		$this->arr['entrysub'] = $EntryModel->substance($condition);
+
 		$this->arr['condition'] = $condition;
 		//计算有多少相关部门
 		$this->arr['countdeparentment'] = count($this->arr['filesub'])+10;
+
 		$arrnumber = [];
 		$i = 0;
 		$temp = '';
@@ -49,7 +52,14 @@ class Content extends Controller
 		}
 		array_shift($arrnumber);
 		$this->arr['all'] = $EntryRowModel->substance($arrnumber);
+		$this->arr['countall'] = count($this->arr['all'])+3;
+		$this->arr['entryd_ae'] = $EntryRowModel->entryd_ae($arrnumber);
 		$this->view('content/substance',$this->arr);
 	}
-
+	public function update_comment(){
+		$condition = $_POST;
+		$EntryRowModel = $this->viewModels('EntryRowModel');
+		$result = $EntryRowModel->update_comment($condition);
+		echo json_encode($result);
+	}
 }
