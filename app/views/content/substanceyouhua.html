@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Simple MVC</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" href="{{ASSET_ROOT}}/layui/css/layui.css">
+        <style>
+            .sometr{
+              background-color:#EAEAEA;
+              color:#3D3D3D;
+              text-align: right  
+            }
+            .wingdings{
+                font-family: 'Wingdings';
+                font-size: 16px;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body class="layui-main">
+        <form class="layui-form">
+        <!-- 注意getenv()在IIS下获取不到正确ip地址，它适用于apache,$_SERVER都可以 -->
+            <blockquote class="layui-elem-quote" style="margin-top:30px">
+                <div class="layui-form-item">
+                    <div id="cat_ids1">         
+                    </div>
+                </div> 
+            </blockquote> 
+        </form>
+        <div id="main" style="width:500px;height:10px"></div>
+            <table class="layui-table">
+              <thead>
+                <tr style="background-color:#B0E2FF;color:#3D3D3D"">
+                  <th>LCCHN Q4/FY17</th>
+                  <th>Ref.#</th>
+                  <th>Risk-Description(incl.Cause and Effect)-Detailed Measures-Description</th>
+                  {% for department in filesub %}
+                  <th class="de_{{department.org_unit}}">{{department.org_unit}}</th>
+                  {% endfor %}
+                  <th>LCCHN (proposal) {{condition.version}}</th>
+                </tr> 
+              </thead>
+              <tbody>
+                  <tr style="background-color:#303030;color:#fff"><td colspan="{{ countdeparentment }}">No placerat apeirian intellegam mei</span></td></tr>
+                  <tr class="sometr">
+                    <td colspan="3">Trend compared to prior quater:</td>
+                    {% for department in filesub %}
+                    <td class="wingdings column_AF org_unit_{{department.org_unit}}"  style="text-align: center">
+                    </td>
+                    {% endfor %}
+                    <td class="wingdings column_AF org_unit_CHN" style="text-align: center">
+                    </td>
+                  </tr>
+                  <tr class="sometr">
+                    <td colspan="3">Degree of response plan completion:</td>
+                    {% for department in filesub %}
+                    <td style="text-align: center" class="column_AE org_unit_{{department.org_unit}}">
+                    </td>
+                    {% endfor %}
+                    <td style="text-align: center" class="column_AE org_unit_CHN">
+                    </td>
+                  </tr>
+                  <tr class="sometr">
+                    <td colspan="3">Response strategy:</td>
+                    {% for department in filesub %}
+                    <td style="text-align: center" class="column_AA org_unit_{{department.org_unit}}">
+                    </td>
+                    {% endfor %}
+                    <td style="text-align: center" class="column_AA org_unit_CHN">
+                    </td>
+                  </tr>
+                  <tr class="sometr">
+                    <td colspan="3">Expected mitigation date:</td>
+                    {% for department in filesub %}
+                    <td style="text-align: center" class="column_AC org_unit_{{department.org_unit}}">
+                    </td>
+                    {% endfor %}
+                    <td style="text-align: center" class="column_AC org_unit_CHN">
+                    </td>
+                  </tr>
+                  <tr class="sometr">
+                    <td colspan="3">Target exposure level:</td>
+                    {% for department in filesub %}
+                    <td class="tdcolor_{{department.org_unit}}_ab column_AB org_unit_{{department.org_unit}}" style="text-align: center;">
+                        <span></span>
+                    </td>
+                    {% endfor %}
+                    <td class="tdcolor_chn_ab column_AB org_unit_CHN" style="text-align: center">
+                        <span></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="tdcolor_chn_m column_M org_unit_CHN">
+                        <span></span>
+                    </td>
+                     <td class="column_B org_unit_CHN"></td>
+                     <td class="column_C org_unit_CHN column_D">
+                        <div id="main" style="width:auto;height:4px"></div>
+                    </td>
+                    {% for department in filesub %}
+                    <td class="tdcolor_{{department.org_unit}}_chn column_Q org_unit_{{department.org_unit}}">
+                        <span></span>
+                    </td>
+                    {% endfor %}
+                    <td class="tdcolor_chn_q column_Q org_unit_CHN" style="border-width:2px;border-top-color:#000;border-bottom-color:#000;border-right-color:#000;border-left-color:#000;cursor:pointer;" ondblclick="levelchoose(this)">
+                        <span></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>CHN</td><td>CHN</td>
+                    <td colspan="{{ countdeparentment-2 }}" style="border-width:2px;border-top-color:#000;border-bottom-color:#000;border-right-color:#000;border-left-color:#000;cursor:pointer;" a_e_r_id="{{condition.id}}" id="chntext" class="comment_{{condition.id}}"></td>
+                  </tr>
+              </tbody>
+            </table>
+            <div class="layui-tab layui-tab-card">
+              <ul class="layui-tab-title">
+               <li class="layui-this">All</li>
+                {% for department in filesub %}
+                    <li>{{department.org_unit}}</li>
+                {% endfor %}
+              </ul>
+              <div class="layui-tab-content" style="height: auto">
+                <div class="layui-tab-item layui-show">
+                    <table class="layui-table">
+                        <tbody>
+                            {% for department in filesub %}
+                            <tr>
+                                <td rowspan="2" style="background-color:#B0E2FF">{{department.org_unit}}</td>
+                                <td>Description</td>
+                                <td colspan="2">
+                                    {% set i = 0 %}
+                                    {% for info in entryd_ae %}
+                                        {% if info.column == 'D' and department.org_unit in info.org_unit and i == 0 %}
+                                        {{info.value}}
+                                        {% set i=i+1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Response Plan</td>
+                                <td colspan="2">
+                                    {% set j = 0 %}
+                                    {% for info in entryd_ae %}
+                                        {% if info.column == 'AE' and department.org_unit in info.org_unit and j == 0 %}
+                                        {{info.value}}
+                                        {% set j=j+1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr style="background-color: #EDEDED">
+                                <td>DM NO.</td>
+                                <td>Measures</td>
+                                <td>Status/Comment</td>
+                            </tr>
+                            {% for info in all %}
+                            {% if info.org_unit == department.org_unit %}
+                            <tr>
+                                <td>{{info.dm_no}}</td>
+                                <td>{{info.detailed_measure}}</td>
+                                <td>{{info.status_comment}}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% for department in filesub %}
+                <div class="layui-tab-item">
+                    <table class="layui-table">
+                        <tbody>
+                            <tr>
+                                <td rowspan="2" style="background-color:#B0E2FF">{{department.org_unit}}</td>
+                                <td>Description</td>
+                                <td colspan="2">
+                                    {% set i = 0 %}
+                                    {% for info in entryd_ae %}
+                                        {% if info.column == 'D' and department.org_unit in info.org_unit and i == 0 %}
+                                        {{info.value}}
+                                        {% set i=i+1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Response Plan</td>
+                                <td colspan="2">
+                                    {% set j = 0 %}
+                                    {% for info in entryd_ae %}
+                                        {% if info.column == 'AE' and department.org_unit in info.org_unit and j == 0 %}
+                                        {{info.value}}
+                                        {% set j=j+1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr style="background-color: #EDEDED">
+                                <td>DM NO.</td>
+                                <td>Measures</td>
+                                <td>Status/Comment</td>
+                            </tr>
+                            {% for info in all %}
+                            {% if info.org_unit == department.org_unit %}
+                            <tr>
+                                <td>{{info.dm_no}}</td>
+                                <td>{{info.detailed_measure}}</td>
+                                <td>{{info.status_comment}}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+    </body>
+    <script src="{{ASSET_ROOT}}/js/jquery-3.1.1.min.js"></script>
+    <script src="{{ASSET_ROOT}}/layui/layui.js"></script>
+    <script src="{{ASSET_ROOT}}/js/echarts.js"></script>
+    <script type="text/javascript">
+        //前端模板使用github上的twigphp/Twig,前端框架使用layui
+        //从控制器方法中得到的数据转化成Js可以使用的数据
+        let catData = "{{entrysub |escape('js')}}";
+        catDatas = JSON.parse(catData);
+        $.each(catDatas,function(index,value){
+            if(value.ref_number != 'Ref.Number'){
+                let ref = value.ref_number.split('_');
+                let len = ref.length-2;
+                let arr = ['B','C','D','M','Q','AA','AB','AC','AE','AF'];
+                if($.inArray(value.column,arr) > 0){
+                    $('".column_'+value.column+' .org_unit_'+ref[len]+'"').attr('text',value);
+                }
+            }
+        })
+        console.log(catDatas);
+        layui.use('layer',function(){
+            var layer = layui.layer;
+        })
+        $("td[class^='tdcolor_']").each(function(){
+            switch($(this).find('span').text()){
+                case 'Low':
+                    $(this).css('background-color','#C1FFC1');
+                    break;
+                case 'High':
+                    $(this).css('background-color','#FF4040');
+                    break;
+                case 'Medium':
+                    $(this).css('background-color','#FFF68F');
+                    break;
+            }
+        })
+        function levelchoose(obj){
+            console.log(2);
+            // '<select name="level" lay-ver><option value="">choose</option><option value="Major">Major</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>';
+        }
+        $("#chntext").dblclick(function(){
+            let tdtext = $(this).text();
+            console.log(tdtext);
+            $(this).empty();
+            $(this).append('<textarea style="width:800px;height:200px" onblur="lcchn_proposal(this)" a_e_r_id="'+$(this).attr('a_e_r_id')+'" value="'+tdtext+'" style="text-align:left">'+tdtext+'</textarea>');
+            $("textarea").focus();
+        })
+        function lcchn_proposal(obj){
+            let param = {};
+            param.e_r_id = $(obj).attr('a_e_r_id');
+            param.comment = $(obj).val();
+            console.log(param);
+            var index = layer.load(2);
+            
+            $.post('{{ASSET_ROOT}}/content/update_comment',param,function(data){
+                layer.close(index);
+                console.log(data);
+                if(!data.match('<b>Fatal')){
+                    alert('save successd');
+                    let tddom = $(obj).parent();
+                    tddom.empty();
+                    tddom.html(param.comment);
+                } else {
+                    alert('save error');
+                }
+            })
+        }
+        layui.use('element', function(){
+            var element = layui.element;
+  
+            //获取hash来切换选项卡，假设当前地址的hash为lay-id对应的值
+            var layid = location.hash.replace(/^#test1=/, '');
+            element.tabChange('test1', layid); //假设当前地址为：http://a.com#test1=222，那么选项卡会自动切换到“发送消息”这一项
+  
+            //监听Tab切换，以改变地址hash值
+            element.on('tab(test1)', function(){
+                location.hash = 'test1='+ this.getAttribute('lay-id');
+            });
+        });
+    </script>
+</html>
