@@ -6,5 +6,5 @@ class LcchnProposal extends Eloquent
 {
     protected $table = 'lcchn_proposal';
     public $timestamps = true;
-    protected $fillable = [];
+    protected $fillable = ['e_r_id'];
 }

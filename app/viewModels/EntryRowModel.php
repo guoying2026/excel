@@ -57,8 +57,4 @@ class EntryRowModel extends Controller
 					->get();
 		return $result;
 	}
-	public function update_comment($condition){
-		$result = $this->model('EntryRow')::where('id',$condition['e_r_id'])->update(['comment'=>$condition['comment']]);
-		return $result;
-	}
 }

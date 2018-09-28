@@ -30,11 +30,14 @@ class Content extends Controller
 		$FileModel = $this->viewModels('FileModel');
 		$EntryModel = $this->viewModels('EntryModel');
 		$EntryRowModel = $this->viewModels('EntryRowModel');
+		$LcchnProposalModel = $this->viewModels('LcchnProposalModel');
 
 		//根据version查找季度有事的部门
 		$this->arr['filesub'] = $FileModel->substance($condition);
 		//根entry_row表id查找entry信息
 		$this->arr['entrysub'] = $EntryModel->substance($condition);
+		$this->arr['lccpro'] = $LcchnProposalModel->substance($condition);
+
 
 		$this->arr['condition'] = $condition;
 		//计算有多少相关部门
@@ -52,14 +55,29 @@ class Content extends Controller
 		}
 		array_shift($arrnumber);
 		$this->arr['all'] = $EntryRowModel->substance($arrnumber);
-		$this->arr['countall'] = count($this->arr['all'])+3;
 		$this->arr['entryd_ae'] = $EntryRowModel->entryd_ae($arrnumber);
+		$result = $EntryRowModel->entry_row();
+		$this->arr['result'] = $result;
 		$this->view('content/substance',$this->arr);
 	}
 	public function update_comment(){
 		$condition = $_POST;
-		$EntryRowModel = $this->viewModels('EntryRowModel');
-		$result = $EntryRowModel->update_comment($condition);
+		$LcchnProposalModel = $this->viewModels('LcchnProposalModel');
+		$result = $LcchnProposalModel->update_comment($condition);
+		echo json_encode($result);
+	}
+	public function update_level(){
+		$condition = $_POST;
+		$EntryModel = $this->viewModels('EntryModel');
+		$EntryModel->update_level($condition);
+		$LcchnProposalModel = $this->viewModels('LcchnProposalModel');
+		$result = $LcchnProposalModel->update_level($condition);
+		echo json_encode($result);
+	}
+	public function update_minutes(){
+		$condition = $_POST;
+		$LcchnProposalModel = $this->viewModels('LcchnProposalModel');
+		$result = $LcchnProposalModel->update_minutes($condition);
 		echo json_encode($result);
 	}
 }

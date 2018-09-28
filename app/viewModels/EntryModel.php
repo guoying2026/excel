@@ -39,4 +39,8 @@ class EntryModel extends Controller
 					->get();
 		return $result;
 	}
+	public function update_level($condition){
+		$result = $this->model('entry')::where('e_r_id',$condition['id'])->where('column','Q')->update(['value'=>$condition['level']]);
+		return $result;
+	}
 }

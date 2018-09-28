@@ -23,18 +23,25 @@
             }
         </style>
     </head>
-    <body class="layui-main">
-        <form class="layui-form">
-        <!-- 注意getenv()在IIS下获取不到正确ip地址，它适用于apache,$_SERVER都可以 -->
-            <blockquote class="layui-elem-quote" style="margin-top:30px">
-                <div class="layui-form-item">
-                    <div id="cat_ids1">         
-                    </div>
-                </div> 
-            </blockquote> 
-        </form>
-        <div id="main" style="width:500px;height:10px"></div>
-            <table class="layui-table">
+    <body class="layui-fluid">
+        <ul class="layui-nav" style="position:fixed;z-index:99;top:20px;width:98%">
+            <li class="layui-nav-item">
+                <a href="{{ASSET_ROOT}}">upload file</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="{{ASSET_ROOT}}/content/index">dashboard</a>
+            </li>
+            <li class="layui-nav-item layui-this">
+                <a href="">version's Detail</a>
+            </li>
+        </ul>
+        <div style="width:auto;height:80px"></div>
+
+        <div class="layui-row">
+        <div class="layui-main layui-col-xs8 layui-col-md8">
+        
+        <div style="width:500px;height:10px"></div>
+            <table class="layui-table" style="position：absolute;">
               <thead>
                 <tr style="background-color:#B0E2FF;color:#3D3D3D"">
                   <th>LCCHN Q4/FY17</th>
@@ -51,147 +58,69 @@
                   <tr class="sometr">
                     <td colspan="3">Trend compared to prior quater:</td>
                     {% for department in filesub %}
-                    <td class="wingdings"  style="text-align: center">
-                        {% for info in entrysub %}
-                            {% if info.column == 'AF' and department.org_unit in info.ref_number %}
-                                {{info.value}}
-                            {% endif %}
-                        {% endfor %}
+                    <td class="wingdings column_AF_{{department.org_unit}}"  style="text-align: center">
                     </td>
                     {% endfor %}
-                    <td class="wingdings" style="text-align: center">
-                        {% for info in entrysub %}
-                            {% if info.column == 'AF' and info.org_unit == 'CHN' %}
-                                {{info.value}}
-                            {% endif %}
-                        {% endfor %}
+                    <td class="wingdings column_AF_CHN" style="text-align: center">
                     </td>
                   </tr>
                   <tr class="sometr">
                     <td colspan="3">Degree of response plan completion:</td>
                     {% for department in filesub %}
-                    <td style="text-align: center">
-                        {% for info in entrysub %}
-                            {% if info.column == 'AE' and department.org_unit in info.ref_number %}
-                                {{info.value}}%
-                            {% endif %}
-                        {% endfor %}
+                    <td style="text-align: center" class="column_AE_{{department.org_unit}}">
                     </td>
                     {% endfor %}
-                    <td style="text-align: center">
-                        {% for info in entrysub %}
-                            {% if info.column == 'AE' and info.org_unit == 'CHN' %}
-                                {{info.value}}%
-                            {% endif %}
-                        {% endfor %}
+                    <td style="text-align: center" class="column_AE_CHN">
                     </td>
                   </tr>
                   <tr class="sometr">
                     <td colspan="3">Response strategy:</td>
                     {% for department in filesub %}
-                    <td style="text-align: center">
-                        {% for info in entrysub %}
-                            {% if info.column == 'AA' and department.org_unit in info.ref_number %}
-                                {{info.value}}
-                            {% endif %}
-                        {% endfor %}
+                    <td style="text-align: center" class="column_AA_{{department.org_unit}}">
                     </td>
                     {% endfor %}
-                    <td style="text-align: center">
-                        {% for info in entrysub %}
-                            {% if info.column == 'AA' and info.org_unit == 'CHN' %}
-                                {{info.value}}
-                            {% endif %}
-                        {% endfor %}
+                    <td style="text-align: center" class="column_AA_CHN">
                     </td>
                   </tr>
                   <tr class="sometr">
                     <td colspan="3">Expected mitigation date:</td>
                     {% for department in filesub %}
-                    <td style="text-align: center">
-                        {% for info in entrysub %}
-                            {% if info.column == 'AC' and department.org_unit in info.ref_number %}
-                                {{info.value}}
-                            {% endif %}
-                        {% endfor %}
+                    <td style="text-align: center" class="column_AC_{{department.org_unit}}">
                     </td>
                     {% endfor %}
-                    <td style="text-align: center">
-                        {% for info in entrysub %}
-                            {% if info.column == 'AC' and info.org_unit == 'CHN' %}
-                                {{info.value}}
-                            {% endif %}
-                        {% endfor %}
+                    <td style="text-align: center" class="column_AC_CHN">
                     </td>
                   </tr>
                   <tr class="sometr">
                     <td colspan="3">Target exposure level:</td>
                     {% for department in filesub %}
-                    <td class="tdcolor_{{department.org_unit}}_ab" style="text-align: center;">
-                        {% for info in entrysub %}
-                            {% if info.column == 'AB' and department.org_unit in info.ref_number %}
-                                <span>{{info.value}}</span>
-                            {% endif %}
-                        {% endfor %}
+                    <td class="tdcolor_{{department.org_unit}}_ab column_AB_{{department.org_unit}}" style="text-align: center;">
+                        <span></span>
                     </td>
                     {% endfor %}
-                    <td class="tdcolor_chn_ab" style="text-align: center">
-                        {% for info in entrysub %}
-                            {% if info.column == 'AB' and info.org_unit == 'CHN' %}
-                                <span>{{info.value}}</span>
-                            {% endif %}
-                        {% endfor %}
+                    <td class="tdcolor_chn_ab column_AB_CHN" style="text-align: center">
+                        <span></span>
                     </td>
                   </tr>
                   <tr>
-                     <td class="tdcolor_chn_m">{% for info in entrysub %}
-                            {% if info.column == 'M' and info.org_unit == 'CHN' %}
-                                <span>{{info.value}}</span>
-                            {% endif %}
-                        {% endfor %}</td>
-                     <td>{% for info in entrysub %}
-                            {% if info.column == 'B' and info.org_unit == 'CHN' %}
-                                {{info.value}}
-                            {% endif %}
-                        {% endfor %}</td>
-                     <td>{% for info in entrysub %}
-                            {% if info.column == 'C' and info.org_unit == 'CHN' %}
-                                {{info.value}}
-                            {% endif %}
-                        {% endfor %}
-                        <div id="main" style="width:auto;height:4px"></div>
-                        {% for info in entrysub %}
-                            {% if info.column == 'D' and info.org_unit == 'CHN' %}
-                                {{info.value}}
-                            {% endif %}
-                        {% endfor %}
+                    <td class="tdcolor_chn_m column_M_CHN">
+                        <span></span>
+                    </td>
+                     <td class="column_B_CHN"></td>
+                     <td class="column_C_D_CHN">
                     </td>
                     {% for department in filesub %}
-                    <td class="tdcolor_{{department.org_unit}}_chn">
-                        {% for info in entrysub %}
-                            {% if info.column == 'Q' and department.org_unit in info.ref_number %}
-                                <span>{{info.value}}</span>
-                            {% endif %}
-                        {% endfor %}
+                    <td class="tdcolor_{{department.org_unit}}_chn column_Q_{{department.org_unit}}">
+                        <span></span>
                     </td>
                     {% endfor %}
-                    <td class="tdcolor_chn_q" style="border-width:2px;border-top-color:#000;border-bottom-color:#000;border-right-color:#000;border-left-color:#000;cursor:pointer;" ondblclick="levelchoose(this)">
-                        {% for info in entrysub %}
-                        {% if info.column == 'Q' and info.org_unit == 'CHN' %}
-                            <span>{{info.value}}</span>
-                        {% endif %}
-                        {% endfor %}
+                    <td class="tdcolor_chn_q column_Q_CHN" style="border-width:2px;border-top-color:#000;border-bottom-color:#000;border-right-color:#000;border-left-color:#000;cursor:pointer;" a_e_r_id="{{condition.id}}" ondblclick="levelchoose(this)">
+                        <span></span>
                     </td>
                   </tr>
                   <tr>
                     <td>CHN</td><td>CHN</td>
-                    <td colspan="{{ countdeparentment-2 }}" style="border-width:2px;border-top-color:#000;border-bottom-color:#000;border-right-color:#000;border-left-color:#000;cursor:pointer;" a_e_r_id="{{condition.id}}" id="chntext">{% set i = 0 %}
-                                    {% for info in entrysub %}
-                                        {% if info.id == condition.id and i == 0 %}
-                                        {{info.comment}}
-                                        {% set i=i+1 %}
-                                        {% endif %}
-                                    {% endfor %}</td>
+                    <td colspan="{{ countdeparentment-2 }}" style="border-width:2px;border-top-color:#000;border-bottom-color:#000;border-right-color:#000;border-left-color:#000;cursor:pointer;" a_e_r_id="{{condition.id}}" id="chntext" class="comment_{{condition.id}}">{{lccpro[0].comment}}</td>
                   </tr>
               </tbody>
             </table>
@@ -299,16 +228,69 @@
                 {% endfor %}
               </div>
             </div>
+        </div>
+        <div class="layui-col-xs4 layui-col-md4">
+            <form class="layui-form">
+                <div class="layui-form-item layui-form-text">
+                    <div class="layui-input-block" style="position: fixed;top:300px;right:33px">
+                        <textarea placeholder="please record" class="layui-textarea" style="width:800px;height:"600px" a_e_r_id="{{condition.id}}" onblur="chnminutes(this)" value="{{lccpro[0].minutes}}">{{lccpro[0].minutes}}</textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        </div>
     </body>
     <script src="{{ASSET_ROOT}}/js/jquery-3.1.1.min.js"></script>
     <script src="{{ASSET_ROOT}}/layui/layui.js"></script>
     <script src="{{ASSET_ROOT}}/js/echarts.js"></script>
     <script type="text/javascript">
+        
+        let id = "{{condition.id |escape('js')}}";
+        let catData1 = "{{filesub |escape('js')}}";
+        catData1 = JSON.parse(catData1);
+        let arr = ['B-CHN','C-CHN','D-CHN','M-CHN','Q-CHN','AA-CHN','AB-CHN','AC-CHN','AE-CHN','AF-CHN'];
+        for(var i in catData1){
+            let temp_org_unit = catData1[i]['org_unit'];
+            arr.push('B-'+temp_org_unit);
+            arr.push('C-'+temp_org_unit);
+            arr.push('D-'+temp_org_unit);
+            arr.push('M-'+temp_org_unit);
+            arr.push('Q-'+temp_org_unit);
+            arr.push('AA-'+temp_org_unit);
+            arr.push('AB-'+temp_org_unit);
+            arr.push('AC-'+temp_org_unit);
+            arr.push('AE-'+temp_org_unit);
+            arr.push('AF-'+temp_org_unit);
+        }
         //前端模板使用github上的twigphp/Twig,前端框架使用layui
         //从控制器方法中得到的数据转化成Js可以使用的数据
         let catData = "{{entrysub |escape('js')}}";
         catDatas = JSON.parse(catData);
-        console.log(catDatas);
+        let cv = '';let dv = '';
+        $.each(catDatas,function(index,val){
+            if(val.ref_number != 'Ref.Number'){
+                let ref = val.ref_number.split('_');
+                let len = ref.length-2;
+                let str1 = val.column+'-'+ref[len];
+                let tmpdom = $('.column_'+val.column+'_'+ref[len]);
+                
+                if(ref[len] == 'CHN' && val.column == 'C'){
+                    cv = val.value;
+                } else if(ref[len] == 'CHN' && val.column == 'D'){
+                    dv = val.value;
+                } 
+                if(cv != '' && dv != ''){
+                    $(".column_C_D_CHN").html(cv+'<div style="width:auto;height:4px"></div>'+dv);
+                }
+                if($.inArray(str1,arr) >= 0){
+                    if(tmpdom.children().length > 0){
+                        tmpdom.find('span').html(val.value);
+                    } else {
+                        tmpdom.html(val.value);
+                    }
+                }
+            }
+        })
         layui.use('layer',function(){
             var layer = layui.layer;
         })
@@ -318,24 +300,78 @@
                     $(this).css('background-color','#C1FFC1');
                     break;
                 case 'High':
-                    $(this).css('background-color','#FF4040');
+                    $(this).css('background-color','#FF4500');
                     break;
                 case 'Medium':
                     $(this).css('background-color','#FFF68F');
                     break;
+                case 'Major':
+                    $(this).css('background-color','#FF4040');
+                    break;
             }
         })
         function levelchoose(obj){
-            console.log(2);
-            // '<select name="level" lay-ver><option value="">choose</option><option value="Major">Major</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>';
+            if($(obj).children().length < 2){
+                let a = '<select id="level" name="level" a_e_r_id="'+$(obj).attr('a_e_r_id')+'" onchange="levelchange(this)"><option value="">choose</option><option value="Major">Major</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>';
+                $(obj).append($(a));
+            }
+            
+        }
+        function levelchange(obj){
+            var index = layer.load(2);
+            let params = {};
+            params.id = $(obj).attr('a_e_r_id');
+            params.level = $(obj).val();
+
+            $.post('{{ASSET_ROOT}}/content/update_level',params,function(data){
+                layer.close(index);
+                 if(data == 1){
+                    data = JSON.parse(data);
+                    layer.tips('choose successd',obj,{tips: 1});
+                    let tddom = $(obj).parent();
+                    switch(params.level){
+                        case 'Low':
+                            tddom.css('background-color','#C1FFC1');
+                            break;
+                        case 'High':
+                            tddom.css('background-color','#FF4500');
+                            break;
+                        case 'Medium':
+                            tddom.css('background-color','#FFF68F');
+                            break;
+                        case 'Major':
+                            tddom.css('background-color','#FF4040');
+                            break;
+                    }
+                    $(obj).remove();
+                    tddom.find('span').html(params.level);
+                } else {
+                    layer.tips('choose error',obj,{tips: 1});
+                }
+            })
         }
         $("#chntext").dblclick(function(){
             let tdtext = $(this).text();
             console.log(tdtext);
             $(this).empty();
             $(this).append('<textarea style="width:800px;height:200px" onblur="lcchn_proposal(this)" a_e_r_id="'+$(this).attr('a_e_r_id')+'" value="'+tdtext+'" style="text-align:left">'+tdtext+'</textarea>');
-            $("textarea").focus();
+            // $("textarea").focus();
         })
+        function chnminutes(obj){
+            var index = layer.load(2);
+            let param = {};
+            param.e_r_id = $(obj).attr('a_e_r_id');
+            param.minutes = $(obj).val();
+            $.post('{{ASSET_ROOT}}/content/update_minutes',param,function(data){
+                layer.close(index);
+                if(data == 1){
+                    data = JSON.parse(data);
+                    layer.tips('save successd',obj,{tips: 1});
+                } else {
+                    layer.tips('save error',obj,{tips: 1});
+                }
+            })
+        }
         function lcchn_proposal(obj){
             let param = {};
             param.e_r_id = $(obj).attr('a_e_r_id');
@@ -345,14 +381,14 @@
             
             $.post('{{ASSET_ROOT}}/content/update_comment',param,function(data){
                 layer.close(index);
-                console.log(data);
-                if(!data.match('<b>Fatal')){
-                    alert('save successd');
+                if(data == 1){
+                    data = JSON.parse(data);
+                    layer.tips('save successd',obj,{tips: 1});
                     let tddom = $(obj).parent();
                     tddom.empty();
                     tddom.html(param.comment);
                 } else {
-                    alert('save error');
+                   layer.tips('save error',obj,{tips: 2});
                 }
             })
         }

@@ -11,7 +11,16 @@
         <meta name="format-detection" content="telephone=no">
         <link rel="stylesheet" href="./layui/css/layui.css">
     </head>
-    <body class="layui-main">
+    <body class="layui-fluid">
+        <div style="width:auto;height:20px"></div>
+        <ul class="layui-nav">
+            <li class="layui-nav-item layui-this">
+                <a href="{{ASSET_ROOT}}/home/index">upload file</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="{{ASSET_ROOT}}/content/index">dashboard</a>
+            </li>
+        </ul>
         <form class="layui-form">
         <!-- 注意getenv()在IIS下获取不到正确ip地址，它适用于apache,$_SERVER都可以 -->
             <blockquote class="layui-elem-quote" style="margin-top:30px">Please provide network accessible (for user {{ USER_NAME }}) addresses for the 2 spreadsheets.</blockquote>
@@ -27,12 +36,6 @@
                     </div>
                 </div> 
             </blockquote>
-            <blockquote class="layui-elem-quote" style="margin-top:30px">
-                <div class="layui-btn-container" style="margin-left:108px">
-                    <a href="content/index" class="layui-btn layui-btn-normal">View data</a> 
-                    <a href="content/truncate" class="layui-btn layui-btn-danger">Delete all data</a> 
-                </div>
-            </blockquote> 
         </form>
     </body>
     <script src="./js/jquery-3.1.1.min.js"></script>
@@ -95,6 +98,7 @@
                 ,tips:['version','BU','ERM']
             });
             form.on('submit(formDemo)',function(data){
+                var index = layer.load(2);
                 if(false == catIns1.isSelected){
                     alert('Please select the end of the file');
                 } else {
@@ -103,11 +107,11 @@
                     param.ag = catIns1.names[2];
                     param.bu = catIns1.names[1];
                     $.post('home/upload',param,function(data){
-                        console.log(data);
+                        layer.close(index);
                         if(!data.match('<b>Fatal')){
                             alert('submit successd');
                         } else {
-                            alert('submit error or file exists');
+                            alert('submit error');
                         }
                     })
                 }

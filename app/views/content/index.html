@@ -10,34 +10,58 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="format-detection" content="telephone=no">
         <link rel="stylesheet" href="{{ASSET_ROOT}}/layui/css/layui.css">
+        <style>
+            .wingdings{
+                font-family: 'Wingdings';
+                font-size: 16px;
+                font-weight: bold;
+            }
+        </style>
     </head>
-    <body class="layui-main">
+    <body class="layui-fluid">
+        <div style="width:auto;height:20px"></div>
+        <ul class="layui-nav">
+            <li class="layui-nav-item">
+                <a href="{{ASSET_ROOT}}">upload file</a>
+            </li>
+            <li class="layui-nav-item  layui-this">
+                <a href="{{ASSET_ROOT}}/content/index">dashboard</a>
+            </li>
+        </ul>
         <form class="layui-form">
         <!-- 注意getenv()在IIS下获取不到正确ip地址，它适用于apache,$_SERVER都可以 -->
-            <blockquote class="layui-elem-quote" style="margin-top:30px">
-                <div class="layui-form-item">
-                    <div id="cat_ids1">         
+                <div class="layui-form-item" style="margin-top:30px;">
+                    <div class="layui-input-block" style="margin-left:0px;">
+                        <select name="city" lay-verify="required">
+                            <option value="">version</option>
+                            <option value="0">北京</option>
+                            <option value="1">上海</option>
+                            <option value="2">广州</option>
+                            <option value="3">深圳</option>
+                            <option value="4">杭州</option>
+                        </select>
                     </div>
-                    <button class="layui-btn" lay-submit lay-filter="contentDemo" id="submit">submit</button>
+                    <!-- <div id="cat_ids1">         
+                    </div>
+                    <button class="layui-btn" lay-submit lay-filter="contentDemo" id="submit">submit</button> -->
                 </div> 
-            </blockquote> 
         </form>
-        <div id="main" style="width:500px;height:200px"></div>
             <table class="layui-table">
-              <thead>
+                <thead>
                 <tr>
-                  <th>Exp</th>
-                  <th>LV.</th>
-                  <th>RP Cmpl.%</th>
-                  <th>Org unit</th>
-                  <th>Entry</th>
-                  <th>category</th>
-                  <th>category name</th>
-                  <th>Expected Mitigation</th>
+                   <th>Exp</th>
+                   <th>LV.</th>
+                   <th>RP Cmpl.%</th>
+                   <th>Org unit</th>
+                   <th>Entry</th>
+                   <th>category</th>
+                   <th>category name</th>
+                   <th>Expected Mitigation</th>
                 </tr> 
-              </thead>
-              <tbody></tbody>
+                </thead>
+                <tbody></tbody>
             </table>
+            <div id="main" style="width:500px;height:200px"></div>
     </body>
     <script src="{{ASSET_ROOT}}/js/jquery-3.1.1.min.js"></script>
     <script src="{{ASSET_ROOT}}/layui/layui.js"></script>
@@ -45,35 +69,35 @@
     <script type="text/javascript">
         //前端模板使用github上的twigphp/Twig,前端框架使用layui
         //从控制器方法中得到的数据转化成Js可以使用的数据
-        let catData = "{{result |escape('js')}}";
-        catDatas = JSON.parse(catData);
-        let len = catDatas.length;
-        let newarr = [];
-        for (let i = 0;i < len;i++) {
-          if(i % 2 == 0){
-            catDatas[i].ref_number += '/'+catDatas[i].value+'/'+catDatas[i+1].value;
-            delete catDatas[i].value;
-            let index = newarr.length;
-            newarr[index] = catDatas[i];
-          }
-        }
-        let leng = newarr.length;
-        let swoxiaoyao = [];
-        for (let i = 0;i < leng;i++){
-          let index = swoxiaoyao.findIndex(val=>val.name == newarr[i].version);
-          if(!~index){
-            index = swoxiaoyao.length;
-            swoxiaoyao.push({
-              "id":newarr[i].file_id,
-              "name": newarr[i].version,
-              children:[]
-            })
-          } 
-          swoxiaoyao[index].children.push({
-            "id":newarr[i].e_r_id,
-            "name":newarr[i].ref_number
-          })
-        }
+        // let catData = "{{result |escape('js')}}";
+        // catDatas = JSON.parse(catData);
+        // let len = catDatas.length;
+        // let newarr = [];
+        // for (let i = 0;i < len;i++) {
+        //   if(i % 2 == 0){
+        //     catDatas[i].ref_number += '/'+catDatas[i].value+'/'+catDatas[i+1].value;
+        //     delete catDatas[i].value;
+        //     let index = newarr.length;
+        //     newarr[index] = catDatas[i];
+        //   }
+        // }
+        // let leng = newarr.length;
+        // let swoxiaoyao = [];
+        // for (let i = 0;i < leng;i++){
+        //   let index = swoxiaoyao.findIndex(val=>val.name == newarr[i].version);
+        //   if(!~index){
+        //     index = swoxiaoyao.length;
+        //     swoxiaoyao.push({
+        //       "id":newarr[i].file_id,
+        //       "name": newarr[i].version,
+        //       children:[]
+        //     })
+        //   } 
+        //   swoxiaoyao[index].children.push({
+        //     "id":newarr[i].e_r_id,
+        //     "name":newarr[i].ref_number
+        //   })
+        // }
         layui.config({
             base : '{{ASSET_ROOT}}/layui'
         }).extend({
@@ -84,51 +108,53 @@
             var form = layui.form
             ,selectN = layui.selectN
             ,selectM = layui.selectM;
-
-            //无限级分类-基本配置
-            var catIns1 = selectN({
-                //元素容器【必填】
-                 elem: '#cat_ids1'
-                ,search:[false,true]
-                //候选数据【必填】
-                ,data: swoxiaoyao
-                ,width:[150,750]
-                ,tips:['version','CHN']
-            });
-
-            form.on('submit(contentDemo)',function(data){
-                if(false == catIns1.isSelected){
-                    alert('Please select the end of the file');
-                } else {
-                    $("tbody").empty();
-                    let params = {};
-                    params.version = catIns1.names[0];
-                    params.ref_number = catIns1.names[1].split('/')[0];
-                    params.e_r_id = catIns1.lastValue;
-                    // console.log(data.field);
-                    console.log(catIns1.names[0]);
-                    $.post('{{ASSET_ROOT}}/content/entry',params,function(data){
-                        data = JSON.parse(data);
-                        console.log(data);
-                        let len = data.length;
-                        let arr = [];
-                        for (let i=0;i<len;i++){
-                            arr[i] = data[i]['value'];
-                        }
-                        $("tbody").append('<tr e_r_id='+data[0]['e_r_id']+'><td>'+arr[5]+'</td><td>'+arr[8]+'<td/><td>'+arr[7]+'%</td><td>'+arr[0]+'</td><td><a a_version='+catIns1.names[0]+' a_e_r_id='+catIns1.lastValue+' a_ref_number='+params.ref_number+' onclick="substance(this)">'+arr[1]+'/'+arr[2]+'</a></td><td>'+arr[3]+'</td><td>'+arr[4]+'</td><td>'+arr[6]+'</td></tr>');
-                    })
-                }
-                return false;
-            })
-
         });
-            function substance(obj){
-                let params = [];
-                params['version'] = $(obj).attr('a_version');
-                params['id'] = $(obj).attr('a_e_r_id');
-                params['ref_number'] = $(obj).attr('a_ref_number');
-                window.location = '{{ASSET_ROOT}}/content/substance/version='+params["version"]+'/id='+params['id']+'/ref_number='+params['ref_number'];
-            }
+
+        //     //无限级分类-基本配置
+        //     var catIns1 = selectN({
+        //         //元素容器【必填】
+        //          elem: '#cat_ids1'
+        //         ,search:[false,true]
+        //         //候选数据【必填】
+        //         ,data: swoxiaoyao
+        //         ,width:[150,750]
+        //         ,tips:['version','CHN']
+        //     });
+
+        //     form.on('submit(contentDemo)',function(data){
+        //         if(false == catIns1.isSelected){
+        //             alert('Please select the end of the file');
+        //         } else {
+        //             $("tbody").empty();
+        //             let params = {};
+        //             params.version = catIns1.names[0];
+        //             params.ref_number = catIns1.names[1].split('/')[0];
+        //             params.e_r_id = catIns1.lastValue;
+        //             // console.log(data.field);
+        //             console.log(catIns1.names[0]);
+        //             $.post('{{ASSET_ROOT}}/content/entry',params,function(data){
+        //                 data = JSON.parse(data);
+        //                 console.log(data);
+        //                 let len = data.length;
+        //                 let arr = [];
+        //                 for (let i=0;i<len;i++){
+        //                     arr[i] = data[i]['value'];
+        //                 }
+        //                 let tpl = $('<tr e_r_id='+data[0]["e_r_id"]+'><td>'+arr[5]+'</td><td class="wingdings">'+arr[8]+'<td/><td>'+arr[7]+'%</td><td>'+arr[0]+'</td><td style="border-width:2px;border-top-color:#000;border-bottom-color:#000;border-right-color:#000;border-left-color:#000;cursor:pointer;"><a a_version='+catIns1.names[0]+' a_e_r_id='+catIns1.lastValue+' a_ref_number='+params.ref_number+' onclick="substance(this)">'+arr[1]+'/'+arr[2]+'</a></td><td>'+arr[3]+'</td><td>'+arr[4]+'</td><td>'+arr[6]+'</td></tr>');
+        //                 $("tbody").html(tpl);
+        //             })
+        //         }
+        //         return false;
+        //     })
+
+        // });
+        //     function substance(obj){
+        //         let params = [];
+        //         params['version'] = $(obj).attr('a_version');
+        //         params['id'] = $(obj).attr('a_e_r_id');
+        //         params['ref_number'] = $(obj).attr('a_ref_number');
+        //         window.location = '{{ASSET_ROOT}}/content/substance/version='+params["version"]+'/id='+params['id']+'/ref_number='+params['ref_number'];
+        //     }
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('main'));
 

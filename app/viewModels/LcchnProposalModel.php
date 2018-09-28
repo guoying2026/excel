@@ -1,43 +1,28 @@
 <?php
+use Illuminate\Database\Capsule\Manager as DB;
 
 class LcchnProposalModel extends Controller
 {
-	/**
-	 * 根据 version和ref_number条件
-	 * 插入和更新LcchnProposal表
-     */
-	public function aoru_version_ref_number($condition){
-		$result = $this->model('LcchnProposal')::updateOrCreate([
-			'version'=>$condition['version'],
-			'ref_number'=>$condition['ref_number']
-		],[
-			'level'=>$condition['level'],
-			'comment'=>$condition['comment'],
-			'minutes'=>$condition['minutes']
-		]);
+	public function create_lcchn_proposal($e_r_id){
+		$result = $this->model('LcchnProposal')::firstOrCreate(['e_r_id'=>$e_r_id]);
 		return $result;
 	}
-	/**
-	 * 根据 version和ref_number条件
-	 * 查询LcchnProposal表的minutes字段
-	 * 返回一行记录
-     */
-	public function get_minutes($condition){
-		$result = $this->model('LcchnProposal')::where('version','=',$condition['version'])->where('ref_number','=',$condition['ref_number'])->first(['minutes']);
+	public function substance($condition){
+		$result = DB::table('lcchn_proposal')
+					->where("e_r_id",'=',$condition['id'])
+					->get();
 		return $result;
 	}
-	/**
-	 * 根据 version和ref_number条件
-	 * 查询LcchnProposal表的level和comment字段
-	 * 返回一行记录
-     */
-	public function get_chn_evaluated($condition){
-		$result = $this->model('LcchnProposal')::where('version','=',$condition['version'])->where('ref_number','=',$condition['ref_number'])->first(['level','comment']);
+	public function update_comment($condition){
+		$result = DB::table('lcchn_proposal')->where('e_r_id',$condition['e_r_id'])->update(['comment'=>$condition['comment']]);
 		return $result;
 	}
-	/**
-	 * 根据 version和ref_number条件
-	 * 查询LcchnProposal表的level和comment字段
-	 * 返回一行记录
-     */
+	public function update_level($condition){
+		$result = DB::table('lcchn_proposal')->where('e_r_id',$condition['id'])->update(['level'=>$condition['level']]);
+		return $result;
+	}
+	public function update_minutes($condition){
+		$result = DB::table('lcchn_proposal')->where('e_r_id',$condition['e_r_id'])->update(['minutes'=>$condition['minutes']]);
+		return $result;
+	}
 }

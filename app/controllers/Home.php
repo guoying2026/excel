@@ -93,6 +93,7 @@ class Home extends Controller
         $EntryModel = $this->viewModels('EntryModel');
         $DetailedMeasureModel = $this->viewModels('DetailedMeasureModel');
         $DetailedModel = $this->viewModels('DetailedModel');
+        $LcchnProposalModel = $this->viewModels('LcchnProposalModel');
         $len = count($result1);
         $j = 0;
         $conparent = [];
@@ -112,6 +113,7 @@ class Home extends Controller
                     case 'CHN':
                         $conditions['parent_id'] = 0;
                         $entryrow = $EntryRowModel->create_entry_row($conditions);
+                        $LcchnProposalModel->create_lcchn_proposal($entryrow['id']);
                         $conparent['id'] = $entryrow['id'];
                         break;
                     default:
