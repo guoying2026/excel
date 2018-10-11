@@ -15,6 +15,25 @@ class Home extends Controller
         $this->view('home/index',$this->arr);
     }
     /**
+     * 删除数据
+     */
+    public function deletedata()
+    {
+        $FileModel = $this->viewModels('FileModel');
+        $EntryModel = $this->viewModels('EntryModel');
+        $EntryRowModel = $this->viewModels('EntryRowModel');
+        $LcchnProposalModel = $this->viewModels('LcchnProposalModel');
+        $DetailedModel = $this->viewModels('DetailedModel');
+        $DetailedMeasureModel = $this->viewModels('DetailedMeasureModel');
+        $FileModel->delete();
+        $EntryModel->delete();
+        $EntryRowModel->delete();
+        $LcchnProposalModel->delete();
+        $DetailedModel->delete();
+        $result = $DetailedMeasureModel->delete();                                                        
+        echo json_encode($result);
+    }
+    /**
      * 读取目录或文件
      * glob函数返回匹配指定模式的文件名和目录，返回包含匹配文件、目录数组。出错返回false
      * array_map 为数组的每个元素应用回调函数
@@ -38,6 +57,7 @@ class Home extends Controller
         $condition = $_POST;
         $data1['filepath'] = DOC_ROOT_1.'//'.$condition['ag'];
         $data1['version'] = $condition['version'];
+        $data1['flag'] = 'aggregated';
         $data1['field_row'] = 7;
         $data1['field_num'] = 41;
         $data1['measures_column'] = '';
@@ -54,6 +74,7 @@ class Home extends Controller
         
         $data2['filepath'] = DOC_ROOT_1.'//'.$condition['bu'];
         $data2['version'] = $condition['version'];
+        $data2['flag'] = 'bu';
         $data2['field_row'] = 13;
         $data2['field_num'] = 49;
         $data2['measures_column'] = 50;
@@ -105,6 +126,11 @@ class Home extends Controller
                 $conditions['virtual_row'] = $j;
                 $conditions['org_unit'] = $v['A'];
                 $conditions['ref_number'] = $v['B'];
+                if($v['B'][0] == 'R'){
+                    $conditions['flag'] = 'risk';
+                } else {
+                    $conditions['flag'] = 'opportunity';
+                }
                 switch ($v['A']) {
                     case 'Bottom Up Risks':
                         $conditions['parent_id'] = $conparent['id'];
@@ -151,6 +177,11 @@ class Home extends Controller
                 $conditions['parent_id'] = '';
                 $conditions['org_unit'] = $v['A'];
                 $conditions['ref_number'] = $v['B'];
+                if($v['B'][0] == 'R'){
+                    $conditions['flag'] = 'risk';
+                } else {
+                    $conditions['flag'] = 'opportunity';
+                }
                 $entryrow = $EntryRowModel->create_entry_row($conditions);
                 $i = 1;
                 $flag = 0;
@@ -190,7 +221,6 @@ class Home extends Controller
                             case 7:
                                 $condm['intented_effect'] = $val;
                                 break;
-                            
                         }
                         if($flag == 7){
                             $flag = 0;

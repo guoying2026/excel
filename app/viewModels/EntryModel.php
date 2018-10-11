@@ -34,13 +34,17 @@ class EntryModel extends Controller
 					->where("entry_row.id",'=',$condition['id'])
 					->orwhere('entry_row.parent_id','=',$condition['id'])
 					->whereIn('entry.value_type',['200','400'])
-					->whereIn('entry.column',['B','C','D','M','Q','AA','AB','AC','AE','AF'])
+					->whereIn('entry.column',['S','B','C','D','M','Q','AA','AB','AC','AE','AF'])
 					->select('entry_row.*','entry.column','entry.value','entry.value_type')
 					->get();
 		return $result;
 	}
 	public function update_level($condition){
 		$result = $this->model('entry')::where('e_r_id',$condition['id'])->where('column','Q')->update(['value'=>$condition['level']]);
+		return $result;
+	}
+	public function delete(){
+		$result = DB::table('entry')->truncate();
 		return $result;
 	}
 }

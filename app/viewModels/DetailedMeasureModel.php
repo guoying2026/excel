@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Database\Capsule\Manager as DB;
 class DetailedMeasureModel extends Controller
 {
 	/**
@@ -15,6 +15,10 @@ class DetailedMeasureModel extends Controller
 			'impl_date' => $condition['impl_date'],
 			'intented_effect' => $condition['intented_effect']
 		]);
+		return $result;
+	}
+	public function delete(){
+		$result = DB::table('detailed_measure')->truncate();
 		return $result;
 	}
 }

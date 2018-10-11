@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Database\Capsule\Manager as DB;
 class DetailedModel extends Controller
 {
 	/**
@@ -12,6 +12,10 @@ class DetailedModel extends Controller
 		],[
 			'status_comment' => $condition['status_comment'],
 		]);
+		return $result;
+	}
+	public function delete(){
+		$result = DB::table('detailed')->truncate();
 		return $result;
 	}
 }

@@ -18,13 +18,13 @@ class App
      *
      * @var string
      */
-    protected $controller = 'Home';
+    protected $controller = 'Content';
 
     /**
      * Stores the method from the split URL
      * @var string
      */
-    protected $method = 'index';
+    protected $method = 'report';
 
     /**
      * Stores the parameters from the split URL
@@ -34,9 +34,18 @@ class App
 
     public function __construct()
     {
-        // var_dump($_SERVER['HTTP_REFERER']);
-        // var_dump($_SERVER['PHP_SELF']);
-        // var_dump($_SERVER['SCRIPT_NAME']);
+
+        // 有效用户认证开始
+        //请在$remote_user数组中添加有效用户，如'guoying\\1'
+        // $remote_user = [
+        //     'guoying\\1',
+        // ];
+        // //用户认证的前提是可以获取到$_SERVER['REMOTE_USER']
+        // if(!in_array($_SERVER['REMOTE_USER'],$remote_user,true)){
+        //     exit('Access unauthorized, connection aborted. <br />Current user: ' . $_SERVER['REMOTE_USER'] . '.');
+        // }
+        //有效用户认证结束
+
         if($_SERVER['REQUEST_URI'] && $_SERVER['REQUEST_URI'] != '/'){
             $routearr = explode('/',trim($_SERVER['REQUEST_URI'],'/'));
         }

@@ -9,21 +9,27 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="format-detection" content="telephone=no">
-        <link rel="stylesheet" href="./layui/css/layui.css">
+        <link rel="stylesheet" href="{{ASSET_ROOT}}/layui/css/layui.css">
     </head>
     <body class="layui-fluid">
         <div style="width:auto;height:20px"></div>
         <ul class="layui-nav">
+            <li class="layui-nav-item">
+                <a href="{{ASSET_ROOT}}">Report</a>
+            </li>
             <li class="layui-nav-item layui-this">
-                <a href="{{ASSET_ROOT}}/home/index">upload file</a>
+                <a href="{{ASSET_ROOT}}/home/index">Upload file</a>
             </li>
             <li class="layui-nav-item">
-                <a href="{{ASSET_ROOT}}/content/index">dashboard</a>
+                <a href="{{ASSET_ROOT}}/content/index">Dashboard</a>
+            </li>
+            <li class="layui-nav-item">
+                <a onclick="deletedata(this)" style="cursor: pointer;">Delete all data</a>
             </li>
         </ul>
         <form class="layui-form">
         <!-- 注意getenv()在IIS下获取不到正确ip地址，它适用于apache,$_SERVER都可以 -->
-            <blockquote class="layui-elem-quote" style="margin-top:30px">Please provide network accessible (for user {{ USER_NAME }}) addresses for the 2 spreadsheets.</blockquote>
+            <blockquote class="layui-elem-quote" style="margin-top:30px;border-left: none;    font: 400 16px Arial;">Please provide network accessible (for user {{ USER_NAME }}) addresses for the 2 spreadsheets.</blockquote>
             <blockquote class="layui-elem-quote" style="margin-top:30px;">
                 <div class="layui-form-item" style="margin-left:54px">
                     <div id="cat_ids1">         
@@ -38,11 +44,12 @@
             </blockquote>
         </form>
     </body>
-    <script src="./js/jquery-3.1.1.min.js"></script>
-    <script src="./layui/layui.js"></script>
+    <script src="{{ASSET_ROOT}}/js/jquery-3.1.1.min.js"></script>
+    <script src="{{ASSET_ROOT}}/layui/layui.js"></script>
     <script type="text/javascript">
         var catData = [];
-        $.post('home/get_directory_file',{path:'upload'},function(data){
+        let arrparam = [];
+        $.post('{{ASSET_ROOT}}/home/get_directory_file',{path:'upload'},function(data){
             if (data.match('<br />')) {
                 alert('search file error');
             } else {
@@ -50,7 +57,6 @@
                 catData = data.reduce((s,v) => {
                     let _tag = v.match(/Q(\d){1}FY(\d){4}/)[0];
                     let index = s.findIndex(val=>val.name == _tag);
-                    console.log(s);
                     if (!~index) {
                         index = s.length;
                         s.push({
@@ -66,18 +72,34 @@
                             children:[]
                         })
                     } else if(v.indexOf('Aggregated') != -1) {
-                        s[index].children[index].children.push({
-                            id: v,
-                            name: v,
-                        })
+                        arrparam.push(v);
                     }
-                    
                     return s;
-                },[]);                
+                },[]);  
+                //遍历
+                for (var i = 0; i < catData.length; i++) {
+                    let catD = catData[i].children;
+                    let catDlen = catD.length;
+                    for (var j = 0; j < catDlen; j++) {
+                        let opps_tag = catD[j].name.match(/Opps_Q(\d){1}FY(\d){4}/);
+                        let risks_tag = catD[j].name.match(/Risks_Q(\d){1}FY(\d){4}/);
+                        if(opps_tag != null){
+                            _tag = opps_tag[0];
+                        } else if(risks_tag != null){
+                            _tag = risks_tag[0];
+                        }
+                        let index1 = arrparam.findIndex(val=>val.match(_tag));
+                        catData[i].children[j].children.push({
+                            id: arrparam[index1],
+                            name: arrparam[index1]
+                        });
+                    }
+                }
             }     
         })
+
         layui.config({
-            base : './layui'
+            base : '{{ASSET_ROOT}}/layui'
         }).extend({
             selectN: './layui_extends/selectN',
             selectM: './layui_extends/selectM',
@@ -100,13 +122,15 @@
             form.on('submit(formDemo)',function(data){
                 var index = layer.load(2);
                 if(false == catIns1.isSelected){
+                    layer.close(index);
                     alert('Please select the end of the file');
                 } else {
                     let param = {};
                     param.version = catIns1.names[0];
                     param.ag = catIns1.names[2];
                     param.bu = catIns1.names[1];
-                    $.post('home/upload',param,function(data){
+                    $.post('{{ASSET_ROOT}}/home/upload',param,function(data){
+                        console.log(data);
                         layer.close(index);
                         if(!data.match('<b>Fatal')){
                             alert('submit successd');
@@ -118,5 +142,32 @@
                 return false;
             })
         });
+        function deletedata(obj){
+            layer.open({
+                title:'delete'
+                ,anim:4
+                ,content: 'delete all data?'
+                ,btn:['yes','no']
+                ,btn1:function(index,layero){
+                    layer.close(index);
+                    var index1 = layer.load(2);
+                    $.post('{{ASSET_ROOT}}/home/deletedata',function(data){
+                        layer.close(index1);
+                        data = JSON.parse(data);
+                        if(data == null){
+                            layer.msg('delete success');
+                        } else {
+                            layer.msg('delete error');
+                        }
+                    })
+                }
+                ,btn2:function(index,layero){
+
+                }
+                ,cancel:function(){
+
+                }
+            })            
+        }
     </script>
 </html>

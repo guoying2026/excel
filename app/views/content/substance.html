@@ -26,15 +26,33 @@
     <body class="layui-fluid">
         <ul class="layui-nav" style="position:fixed;z-index:99;top:20px;width:98%">
             <li class="layui-nav-item">
-                <a href="{{ASSET_ROOT}}">upload file</a>
+                <a href="{{ASSET_ROOT}}">Report</a>
             </li>
             <li class="layui-nav-item">
-                <a href="{{ASSET_ROOT}}/content/index">dashboard</a>
+                <a href="{{ASSET_ROOT}}/home/index">Upload file</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="{{ASSET_ROOT}}/content/index">Dashboard</a>
             </li>
             <li class="layui-nav-item layui-this">
-                <a href="">version's Detail</a>
+                <a href="">Version's Detail</a>
+            </li>
+            <li class="layui-nav-item">
+                <a onclick="deletedata(this)" style="cursor: pointer;">Delete all data</a>
             </li>
         </ul>
+        <form class="layui-form" style="position:fixed;z-index:99;top:50px;width:98%">
+            <div class="layui-form-item" style="margin-top:30px;">
+                <div class="layui-input-block" style="margin-left:0px;">
+                    <select lay-filter="version" name="version">
+                        <option value="">version</option>
+                        {% for info in result %}
+                        <option value="{{info.id}}">{{info.version}}</option>
+                            {% endfor %}
+                    </select>
+                </div>
+            </div> 
+        </form>
         <div style="width:auto;height:80px"></div>
 
         <div class="layui-row">
@@ -44,7 +62,7 @@
             <table class="layui-table" style="position：absolute;">
               <thead>
                 <tr style="background-color:#B0E2FF;color:#3D3D3D"">
-                  <th>LCCHN Q4/FY17</th>
+                  <th></th>
                   <th>Ref.#</th>
                   <th>Risk-Description(incl.Cause and Effect)-Detailed Measures-Description</th>
                   {% for department in filesub %}
@@ -58,10 +76,10 @@
                   <tr class="sometr">
                     <td colspan="3">Trend compared to prior quater:</td>
                     {% for department in filesub %}
-                    <td class="wingdings column_AF_{{department.org_unit}}"  style="text-align: center">
+                    <td class="column_AF_{{department.org_unit}}"  style="text-align: center">
                     </td>
                     {% endfor %}
-                    <td class="wingdings column_AF_CHN" style="text-align: center">
+                    <td class="column_AF_CHN" style="text-align: center">
                     </td>
                   </tr>
                   <tr class="sometr">
@@ -244,7 +262,7 @@
     <script src="{{ASSET_ROOT}}/layui/layui.js"></script>
     <script src="{{ASSET_ROOT}}/js/echarts.js"></script>
     <script type="text/javascript">
-        
+
         let id = "{{condition.id |escape('js')}}";
         let catData1 = "{{filesub |escape('js')}}";
         catData1 = JSON.parse(catData1);
@@ -274,19 +292,27 @@
                 let str1 = val.column+'-'+ref[len];
                 let tmpdom = $('.column_'+val.column+'_'+ref[len]);
                 
-                if(ref[len] == 'CHN' && val.column == 'C'){
-                    cv = val.value;
-                } else if(ref[len] == 'CHN' && val.column == 'D'){
-                    dv = val.value;
-                } 
-                if(cv != '' && dv != ''){
-                    $(".column_C_D_CHN").html(cv+'<div style="width:auto;height:4px"></div>'+dv);
-                }
-                if($.inArray(str1,arr) >= 0){
-                    if(tmpdom.children().length > 0){
-                        tmpdom.find('span').html(val.value);
-                    } else {
-                        tmpdom.html(val.value);
+                if(val.column == 'S'){
+                    $('thead').find('th:eq(0)').html('LCCHN '+val.value);
+                } else {
+                    if(ref[len] == 'CHN' && val.column == 'C'){
+                        cv = val.value;
+                    } else if(ref[len] == 'CHN' && val.column == 'D'){
+                        dv = val.value;
+                    }
+                    if(val.column == 'AF' && val.value == 'ó'){
+                        $('.column_AF_'+ref[len]).addClass('wingdings');
+                    } 
+                    if(cv != '' && dv != ''){
+                        $(".column_C_D_CHN").html(cv+'<div style="width:auto;height:4px"></div>'+dv);
+                    }
+
+                    if($.inArray(str1,arr) >= 0){
+                        if(tmpdom.children().length > 0){
+                            tmpdom.find('span').html(val.value);
+                        } else {
+                            tmpdom.html(val.value);
+                        }
                     }
                 }
             }
@@ -404,5 +430,32 @@
                 location.hash = 'test1='+ this.getAttribute('lay-id');
             });
         });
+        function deletedata(obj){
+            layer.open({
+                title:'delete'
+                ,anim:4
+                ,content: 'delete all data?'
+                ,btn:['yes','no']
+                ,btn1:function(index,layero){
+                    layer.close(index);
+                    var index1 = layer.load(2);
+                    $.post('{{ASSET_ROOT}}/home/deletedata',function(data){
+                        layer.close(index1);
+                        data = JSON.parse(data);
+                        if(data == null){
+                            layer.msg('delete success');
+                        } else {
+                            layer.msg('delete error');
+                        }
+                    })
+                }
+                ,btn2:function(index,layero){
+
+                }
+                ,cancel:function(){
+
+                }
+            })            
+        }
     </script>
 </html>

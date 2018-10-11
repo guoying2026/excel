@@ -10,58 +10,66 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="format-detection" content="telephone=no">
         <link rel="stylesheet" href="{{ASSET_ROOT}}/layui/css/layui.css">
-        <style>
-            .wingdings{
-                font-family: 'Wingdings';
-                font-size: 16px;
-                font-weight: bold;
-            }
-        </style>
     </head>
     <body class="layui-fluid">
         <div style="width:auto;height:20px"></div>
         <ul class="layui-nav">
             <li class="layui-nav-item">
-                <a href="{{ASSET_ROOT}}">upload file</a>
+                <a href="{{ASSET_ROOT}}">Report</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="{{ASSET_ROOT}}/home/index">Upload file</a>
             </li>
             <li class="layui-nav-item  layui-this">
-                <a href="{{ASSET_ROOT}}/content/index">dashboard</a>
+                <a href="{{ASSET_ROOT}}/content/index">Dashboard</a>
+            </li>
+            <li class="layui-nav-item">
+                <a onclick="deletedata(this)" style="cursor: pointer;">Delete all data</a>
             </li>
         </ul>
         <form class="layui-form">
-        <!-- 注意getenv()在IIS下获取不到正确ip地址，它适用于apache,$_SERVER都可以 -->
-                <div class="layui-form-item" style="margin-top:30px;">
-                    <div class="layui-input-block" style="margin-left:0px;">
-                        <select name="city" lay-verify="required">
-                            <option value="">version</option>
-                            <option value="0">北京</option>
-                            <option value="1">上海</option>
-                            <option value="2">广州</option>
-                            <option value="3">深圳</option>
-                            <option value="4">杭州</option>
-                        </select>
-                    </div>
-                    <!-- <div id="cat_ids1">         
-                    </div>
-                    <button class="layui-btn" lay-submit lay-filter="contentDemo" id="submit">submit</button> -->
-                </div> 
+            <div class="layui-form-item" style="margin-top:30px;">
+                <div class="layui-input-block" style="margin-left:0px;">
+                    <select lay-filter="version" name="version">
+                        <option value="">version</option>
+                        {% set i = 0 %}
+                        {% for info in result %}
+                        {% if i%2 == 0 %}
+                            <option value="{{info.id}}">{{info.version}}-Opps</option>
+                        {% else %}
+                            <option value="{{info.id}}">{{info.version}}-Risks</option>
+                        {% endif %}
+                        {% set i = i + 1 %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs6" >
+                    <div id="main" style="width: auto;height:200px;"></div>
+                </div>
+            
+                <div class="layui-col-xs6">
+                    <div id="main4" style="width: auto;height:200px;"></div>
+                </div>
+            </div>
         </form>
-            <table class="layui-table">
-                <thead>
-                <tr>
-                   <th>Exp</th>
-                   <th>LV.</th>
-                   <th>RP Cmpl.%</th>
-                   <th>Org unit</th>
-                   <th>Entry</th>
-                   <th>category</th>
-                   <th>category name</th>
-                   <th>Expected Mitigation</th>
-                </tr> 
-                </thead>
-                <tbody></tbody>
-            </table>
-            <div id="main" style="width:500px;height:200px"></div>
+        
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <th>Exp</th>
+                <th>LV.</th>
+                <th>RP Cmpl.%</th>
+                <th>Org unit</th>
+                <th>Entry</th>
+                <th>category</th>
+                <th>category name</th>
+                <th>Expected Mitigation</th>
+            </tr> 
+            </thead>
+            <tbody></tbody>
+        </table>
     </body>
     <script src="{{ASSET_ROOT}}/js/jquery-3.1.1.min.js"></script>
     <script src="{{ASSET_ROOT}}/layui/layui.js"></script>
@@ -69,35 +77,6 @@
     <script type="text/javascript">
         //前端模板使用github上的twigphp/Twig,前端框架使用layui
         //从控制器方法中得到的数据转化成Js可以使用的数据
-        // let catData = "{{result |escape('js')}}";
-        // catDatas = JSON.parse(catData);
-        // let len = catDatas.length;
-        // let newarr = [];
-        // for (let i = 0;i < len;i++) {
-        //   if(i % 2 == 0){
-        //     catDatas[i].ref_number += '/'+catDatas[i].value+'/'+catDatas[i+1].value;
-        //     delete catDatas[i].value;
-        //     let index = newarr.length;
-        //     newarr[index] = catDatas[i];
-        //   }
-        // }
-        // let leng = newarr.length;
-        // let swoxiaoyao = [];
-        // for (let i = 0;i < leng;i++){
-        //   let index = swoxiaoyao.findIndex(val=>val.name == newarr[i].version);
-        //   if(!~index){
-        //     index = swoxiaoyao.length;
-        //     swoxiaoyao.push({
-        //       "id":newarr[i].file_id,
-        //       "name": newarr[i].version,
-        //       children:[]
-        //     })
-        //   } 
-        //   swoxiaoyao[index].children.push({
-        //     "id":newarr[i].e_r_id,
-        //     "name":newarr[i].ref_number
-        //   })
-        // }
         layui.config({
             base : '{{ASSET_ROOT}}/layui'
         }).extend({
@@ -108,69 +87,193 @@
             var form = layui.form
             ,selectN = layui.selectN
             ,selectM = layui.selectM;
+            form.on('select(version)',function(data){
+                let params = {};
+                params.id = data.value;
+                let vers = $("select").find("option:selected").text();
+                vers = vers.split('-');
+                params.version =vers[0];
+                if(vers[1] == 'Opps'){
+                    params.flag = 'opportunity';
+                } else if(vers[1] == 'Risks'){
+                    params.flag = 'risk';
+                }
+                $.post('{{ASSET_ROOT}}/content/entry_row',params,function(data){
+                        data = JSON.parse(data);
+                        let levelimagelen = data.levelimage.length;
+                        let levelimage = [];
+                        for(let i=0;i < levelimagelen;i++){
+                            levelimage.push({
+                                name:data.levelimage[i].name,
+                                value:1
+                            })
+                        }
+                        
+                        let categorynamelen = data.categoryname.length;
+                        let categoryname = [];
+                        for(let i=0;i < categorynamelen;i++){
+                            categoryname.push({
+                                name:data.categoryname[i].name,
+                                value:1
+                            })
+                        }
+                        
+                        data = data.entryrow;
+                        let len = data.length;
+                        var newarr = [];
+                        let tpl = '';
+                        for (let i = 0;i < len;i++) {
+                            if(i % 9 == 0){
+                                let index = newarr.length;
+                                tpl += '<tr a_e_r_id='+data[i]["e_r_id"]+'>';
+                                tpl += '<td>'+data[i+5].value+'</td>';
+                                if(data[i+8].value == 'ó'){
+                                    tpl += '<td style="font-family:Wingdings;">'+data[i+8].value+'</td>';
+                                } else {
+                                    tpl += '<td>'+data[i+8].value+'</td>';
+                                }
+
+                                if(data[i+7].value > 0){
+                                    tpl += '<td>'+data[i+7].value+'%</td>';
+                                } else {
+                                    tpl += '<td>'+data[i+7].value+'</td>';
+                                }
+                                tpl += '<td>'+data[i].value+'</td>';
+                                tpl += '<td style="border-width:2px;border-color:#000;cursor:pointer;"><a a_version='+data[i].version+' a_e_r_id='+data[i].e_r_id+' a_ref_number='+data[i].ref_number+' onclick="substance(this)">'+data[i+1].value+'/'+data[i+2].value+'</a></td>';
+                                tpl += '<td>'+data[i+3].value+'</td>';
+                                tpl += '<td>'+data[i+4].value+'</td>';
+                                tpl += '<td>'+data[i+6].value+'</td></tr>';
+                            }
+                        }
+                        $("tbody").html(tpl);
+                        // 基于准备好的dom，初始化echarts实例
+                        var myChart = echarts.init(document.getElementById('main'));
+
+                         // 指定图表的配置项和数据
+                        myChart.title = '环形图';
+
+                        var option = {
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b}: {c} ({d}%)"
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                x: 'left',
+                                data:['High','Medium','Low']
+                            },
+                            series: [
+                            {
+                                name:'detail',
+                                type:'pie',
+                                radius: ['50%', '70%'],
+                                avoidLabelOverlap: false,
+                                label: {
+                                    normal: {
+                                        show: false,
+                                        position: 'center'
+                                    },
+                                    emphasis: {
+                                        show: true,
+                                        textStyle: {
+                                            fontSize: '30',
+                                            fontWeight: 'bold'
+                                        }
+                                    }
+                                },
+                                labelLine: {
+                                    normal: {
+                                        show: false
+                                    }
+                                },
+                                data:levelimage
+                            }]
+                        };
+                        myChart.setOption(option);
+
+         
+
+                    var myChart4 = echarts.init(document.getElementById('main4'));
+
+                    // 指定图表的配置项和数据
+                    myChart4.title = '环形图';
+
+                    var option4 = {
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b}: {c} ({d}%)"
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            x: 'left',
+                            data:['Medium','High','Low']
+                        },
+                        series: [
+                        {
+                            name:'detail',
+                            type:'pie',
+                            radius: ['50%', '70%'],
+                            avoidLabelOverlap: false,
+                            label: {
+                                normal: {
+                                    show: false,
+                                    position: 'center'
+                                },
+                                emphasis: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: '30',
+                                        fontWeight: 'bold'
+                                    }
+                                }
+                            },
+                            labelLine: {
+                                normal: {
+                                    show: false
+                                }
+                            },
+                            data:categoryname
+                        }
+                    ]
+                };
+                myChart4.setOption(option4);
+                })
+            })
         });
+        function substance(obj){
+            let params = [];
+            params['version'] = $(obj).attr('a_version');
+            params['id'] = $(obj).attr('a_e_r_id');
+            params['ref_number'] = $(obj).attr('a_ref_number');
+            window.location = '{{ASSET_ROOT}}/content/substance/version='+params["version"]+'/id='+params['id']+'/ref_number='+params['ref_number'];
+        }
+        function deletedata(obj){
+            layer.open({
+                title:'delete'
+                ,anim:4
+                ,content: 'delete all data?'
+                ,btn:['yes','no']
+                ,btn1:function(index,layero){
+                    layer.close(index);
+                    var index1 = layer.load(2);
+                    $.post('{{ASSET_ROOT}}/home/deletedata',function(data){
+                        layer.close(index1);
+                        data = JSON.parse(data);
+                        if(data == null){
+                            layer.msg('delete success');
+                        } else {
+                            layer.msg('delete error');
+                        }
+                    })
+                }
+                ,btn2:function(index,layero){
 
-        //     //无限级分类-基本配置
-        //     var catIns1 = selectN({
-        //         //元素容器【必填】
-        //          elem: '#cat_ids1'
-        //         ,search:[false,true]
-        //         //候选数据【必填】
-        //         ,data: swoxiaoyao
-        //         ,width:[150,750]
-        //         ,tips:['version','CHN']
-        //     });
+                }
+                ,cancel:function(){
 
-        //     form.on('submit(contentDemo)',function(data){
-        //         if(false == catIns1.isSelected){
-        //             alert('Please select the end of the file');
-        //         } else {
-        //             $("tbody").empty();
-        //             let params = {};
-        //             params.version = catIns1.names[0];
-        //             params.ref_number = catIns1.names[1].split('/')[0];
-        //             params.e_r_id = catIns1.lastValue;
-        //             // console.log(data.field);
-        //             console.log(catIns1.names[0]);
-        //             $.post('{{ASSET_ROOT}}/content/entry',params,function(data){
-        //                 data = JSON.parse(data);
-        //                 console.log(data);
-        //                 let len = data.length;
-        //                 let arr = [];
-        //                 for (let i=0;i<len;i++){
-        //                     arr[i] = data[i]['value'];
-        //                 }
-        //                 let tpl = $('<tr e_r_id='+data[0]["e_r_id"]+'><td>'+arr[5]+'</td><td class="wingdings">'+arr[8]+'<td/><td>'+arr[7]+'%</td><td>'+arr[0]+'</td><td style="border-width:2px;border-top-color:#000;border-bottom-color:#000;border-right-color:#000;border-left-color:#000;cursor:pointer;"><a a_version='+catIns1.names[0]+' a_e_r_id='+catIns1.lastValue+' a_ref_number='+params.ref_number+' onclick="substance(this)">'+arr[1]+'/'+arr[2]+'</a></td><td>'+arr[3]+'</td><td>'+arr[4]+'</td><td>'+arr[6]+'</td></tr>');
-        //                 $("tbody").html(tpl);
-        //             })
-        //         }
-        //         return false;
-        //     })
+                }
+            })            
+        }
 
-        // });
-        //     function substance(obj){
-        //         let params = [];
-        //         params['version'] = $(obj).attr('a_version');
-        //         params['id'] = $(obj).attr('a_e_r_id');
-        //         params['ref_number'] = $(obj).attr('a_ref_number');
-        //         window.location = '{{ASSET_ROOT}}/content/substance/version='+params["version"]+'/id='+params['id']+'/ref_number='+params['ref_number'];
-        //     }
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('main'));
-
-        // 指定图表的配置项和数据
-        var option = {
-            series: {
-                type: 'pie',
-                data: [
-                    {name: 'A', value: 1212},
-                    {name: 'B', value: 2323},
-                    {name: 'C', value: 1919}
-                ]
-            }
-        };
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
     </script>
 </html>

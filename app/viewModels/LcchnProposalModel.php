@@ -25,4 +25,8 @@ class LcchnProposalModel extends Controller
 		$result = DB::table('lcchn_proposal')->where('e_r_id',$condition['e_r_id'])->update(['minutes'=>$condition['minutes']]);
 		return $result;
 	}
+	public function delete(){
+		$result = DB::table('lcchn_proposal')->truncate();
+		return $result;
+	}
 }

@@ -11,11 +11,28 @@ class FileModel extends Controller
 			'version' => $condition['version'],
 			'filepath' => $condition['filepath']
 		],[
+			'flag' => $condition['flag'],
 			'field_row' => $condition['field_row'],
 			'field_num' => $condition['field_num'],
 			'measures_column' => $condition['measures_column'],
 			'value_row_start' => $condition['value_row_start']
 		]);
+		return $result;
+	}
+	public function file_version(){
+		$result = DB::table('file')
+					->where('flag','=','aggregated')
+					->select('id','version')
+					->get();
+		return $result;
+	}
+	//report查询信息,最多能看1个季度
+	public function new_version(){
+		$result = DB::table('file')
+					->groupby('version')
+					->select('id','version')
+					->limit(1)
+					->get();
 		return $result;
 	}
 	/**
@@ -30,6 +47,20 @@ class FileModel extends Controller
 					->groupby("org_unit")
 					->select('file.version','entry_row.*')
 					->get();
+		return $result;
+	}
+	
+	public function tableimage($condition){
+		$result = DB::table('file')
+					->join("entry_row",'file.id','=','entry_row.file_id')
+					->where('entry_row.parent_id','=','0')
+					->where('file.version','=',$condition['version'])
+					->select('entry_row.id')
+					->get();
+		return $result;
+	}
+	public function delete(){
+		$result = DB::table('file')->truncate();
 		return $result;
 	}
 }
